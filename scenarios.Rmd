@@ -8,7 +8,10 @@ author:
     url: https://github.com/tarensanders
 date: "`r Sys.Date()`"
 repository_url: https://github.com/tarensanders/screen_viz
-output: distill::distill_article
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
 ---
 
 ```{r setup, echo = FALSE}
@@ -32,6 +35,8 @@ df <- df %>%
       str_replace(plain_language_exposure, "Video game console", "Video games"),
     general_outcome = str_extract(plain_language_outcome, "[^:]+"),
     general_exposure = str_extract(plain_language_exposure, "[^:]+"),
+    specific_outcome = gsub(".*: ", "", plain_language_outcome),
+    specific_exposure = gsub(".*: ", "", plain_language_exposure),
     general_exposure =
       str_replace(general_exposure, "Screen use", "General screen use"),
     age_group_code = case_when(
@@ -166,7 +171,7 @@ The absolute values don't really matter.
 
 ## Task Two
 
-Explore an overview of the outcome categories for the selected exposure category.
+> Explore an overview of the outcome categories for the selected exposure category.
 
 (*E.g., if they have chosen 'video games'*)
 
@@ -237,13 +242,13 @@ df %>%
 
 ## Task Three
 
-Visualise the uncertainty for the selected exposure.
+> Visualise the uncertainty for the selected exposure.
 
 (*Not sure how to do this one*)
 
 ## Task Four
 
-Filter the results by child's age
+> Filter the results by child's age
 
 ### Idea one
 
@@ -265,7 +270,7 @@ plotly::ggplotly(p, tooltip = "text")
 
 ## Task Five
 
-Click into an otcome category to get additional information on the result.
+> Click into an otcome category to get additional information on the result.
 
 (*Can't really do this is ggplot*)
 
@@ -276,3 +281,78 @@ Click into an otcome category to get additional information on the result.
 > Use the system to get an overview of the evidence (exposure, outcome, effect size).
 > They search for the exposure and/or the outcome, and optionally filter by age.
 > They click into a relationship and can access the forest plot of the original studies, and the link to the original meta-analysis (and other, related studies, uncertainty). Three levels: evidence, uncertainty, meta-data.
+
+## Task One
+
+> Explore the outcomes that there are evidence for.
+
+Same as in [Scenario One].
+
+## Task Two
+
+> Explore the evidence for the selected exposure.
+
+This is the same as [Scenario One]. To look at a difference, let's imagine that they are instead searching by outcome.
+
+(*E.g., they choose 'body composition'*)
+
+### Idea One
+
+```{r layout="l-page", fig.height=6}
+df %>%
+  filter(general_outcome == "Body composition") %>%
+  group_by(general_exposure, specific_exposure, age_group) %>%
+  summarise(r_min = min(r_lb), r_max = max(r_ub)) %>%
+  ungroup() %>%
+  ggplot(aes(
+    x = specific_exposure,
+    ymin = r_min,
+    ymax = r_max,
+    fill = age_group,
+    col = age_group
+  )) +
+  geom_linerange(position = position_dodge(width = 1), size = 3) +
+  geom_hline(yintercept = 0) +
+  # scale_y_continuous(name = "Correlation", limits = c(-0.8, 0.8)) +
+  facet_wrap(
+    ~general_exposure,
+    ncol = 1, scale = "free_y"
+  ) +
+  coord_flip() +
+  theme_minimal() +
+  theme(strip.text.x = element_text(hjust = 0.00, face = "bold"))
+```
+
+## Task Three
+
+> Visualise the uncertainty for the selected exposure.
+
+Same as [Scenario One]. 
+
+## Task Four
+
+> Filter the results by child's age
+
+Same as [Scenario One]. 
+
+## Task Five
+
+> Explore the underlying data and meta-data
+
+I've realised that I'll need to relink the original study-level data back to this to show original forest plots.
+
+Otherwise, one option would be to display a relationship and show the forest plots in the tooltip?
+
+```{r, layout="l-page", fig.height=6, fig.width=8}
+p <- df %>%
+  filter(general_outcome == "Body composition") %>%
+  ggplot(aes(
+    y = log(n), x = r,
+    color = general_exposure,
+    text = plain_language_exposure
+  )) +
+  geom_point(size = 5) +
+  theme_minimal()
+
+plotly::ggplotly(p, tooltip = "text")
+```
