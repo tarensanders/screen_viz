@@ -36,18 +36,16 @@ df <- df %>%
     specific_exposure = gsub(".*: ", "", plain_language_exposure),
     general_exposure =
       str_replace(general_exposure, "Screen use", "General screen use"),
-    age_group_code = case_when(
-      age_group == "All" ~ 0,
-      age_group == "Young children" ~ 1,
-      age_group == "Children" ~ 2,
-      age_group == "Adolescents" ~ 3
+    age_group = fct_relevel(
+      age_group,
+      c("All", "Young children", "Children", "Adolescents")
     ),
     r = if_else(is.na(reanalysis_r), converted_r, reanalysis_r),
     r_lb = if_else(
       is.na(reanalysis_cilb_95), converted_cilb, reanalysis_cilb_95
     ),
     r_ub = if_else(
-      is.na(reanalysis_ciub_95), converted_cilb, reanalysis_ciub_95
+      is.na(reanalysis_ciub_95), converted_ciub, reanalysis_ciub_95
     ),
     n = if_else(
       is.na(reanalysis_n), original_n, reanalysis_n
@@ -55,7 +53,14 @@ df <- df %>%
     k = if_else(
       is.na(reanalysis_k), original_k, reanalysis_k
     )
-  )
+  ) %>%
+  group_by(
+    plain_language_outcome,
+    plain_language_exposure,
+    age_group
+  ) %>%
+  slice_max(n, with_ties = TRUE) %>%
+  ungroup()
 ```
 
 # Scenario One
@@ -76,7 +81,7 @@ df <- df %>%
 
 #### General Categories
 
-```{r hm-counts, layout="l-page"}
+```{r hm-counts}
 df %>%
   group_by(general_exposure, general_outcome) %>%
   summarise(n = n()) %>%
@@ -90,7 +95,7 @@ df %>%
 
 Don't think this works.
 
-```{r hm-subcounts, layout="l-page"}
+```{r hm-subcounts}
 df %>%
   group_by(plain_language_exposure, plain_language_outcome) %>%
   summarise(n = n()) %>%
@@ -106,7 +111,7 @@ df %>%
 
 I think this is my preferred option, although it does have some issues.
 
-```{r hm-es, layout="l-page"}
+```{r hm-es}
 df %>%
   group_by(general_exposure, general_outcome) %>%
   summarise(r = mean(r)) %>%
@@ -125,11 +130,15 @@ df %>%
 
 Don't think this works.
 
-```{r hm-subes, layout="l-page"}
+```{r hm-subes}
 df %>%
   group_by(plain_language_exposure, plain_language_outcome) %>%
   summarise(r = mean(r)) %>%
-  ggplot(aes(x = plain_language_exposure, y = plain_language_outcome, fill = r)) +
+  ggplot(aes(
+    x = plain_language_exposure,
+    y = plain_language_outcome,
+    fill = r
+  )) +
   geom_tile() +
   scale_fill_distiller(palette = "RdBu", limits = c(-.5, .5)) +
   theme_minimal() +
@@ -139,7 +148,7 @@ df %>%
 
 This also works, especially if I could combine the subcategories to show the 'range' of effect sizes. Could not come up with a way to do that though.
 
-```{r hm-mixes, layout="l-page"}
+```{r hm-mixes}
 df %>%
   group_by(general_exposure, plain_language_outcome) %>%
   summarise(r = mean(r)) %>%
@@ -157,70 +166,86 @@ df %>%
 
 (*E.g., if they have chosen 'video games'*)
 
-### Idea One
+### Using a linerange
 
-Using length as the main idiom.
-
-```{r, layout="l-page"}
-df %>%
+```{r}
+p_df <- df %>%
   filter(general_exposure == "Video games") %>%
-  ggplot(aes(
-    x = plain_language_outcome,
-    y = r,
+  select(
+    general_exposure, general_outcome, plain_language_exposure,
+    plain_language_outcome, r, r_ub, r_lb, age_group, n
+  ) %>%
+  mutate(plain_language_outcome = fct_reorder(plain_language_outcome, r)) %>%
+  arrange(plain_language_outcome, r) %>%
+  group_by(general_exposure, plain_language_outcome) %>%
+  mutate(
+    effect_id = row_number(),
+    group_id = cur_group_id(),
+    median_effect = median(r)
+  ) %>%
+  ungroup() %>%
+  arrange(desc(median_effect), plain_language_outcome, desc(r)) %>%
+  mutate(
+    aux = row_number()
+  ) %>%
+  group_by(plain_language_outcome) %>%
+  mutate(breaks = median(aux)) %>%
+  ungroup() %>%
+  mutate(
+    stripe = factor(if_else(group_id %% 2 == 0, 1, 0))
+  )
+
+ggplot(p_df, aes(
+  x = aux,
+  y = r
+)) +
+  geom_linerange(aes(
     ymin = r_lb,
     ymax = r_ub,
-    fill = age_group,
     col = age_group
-  )) +
-  geom_linerange(position = position_dodge(width = 0.5), size = 3) +
-  geom_point(
-    size = 2, shape = 21,
-    color = "white", stroke = 0.5, position = position_dodge(width = 0.5)
+  ), size = 3) +
+  geom_point(aes(
+    size = log(n)
+  ),
+  shape = 21,
+  color = "white", stroke = 0.5, fill = "black"
   ) +
-  scale_y_continuous(name = "Correlation", limits = c(-0.8, 0.8)) +
+  geom_rect(
+    aes(
+      xmax = aux + 0.5, xmin = aux - 0.5,
+      ymin = -1, ymax = 1, fill = stripe
+    ),
+    alpha = 0.4
+  ) +
+  scale_y_continuous(name = "Correlation", limits = c(-1, 1)) +
+  scale_x_continuous("Outcome",
+    labels = unique(p_df$plain_language_outcome),
+    breaks = unique(p_df$breaks)
+  ) +
+  scale_fill_manual(values = c("white", "grey50"), guide = "none") +
+  scale_size(guide = "none") +
   coord_flip() +
-  theme_minimal(base_size = 5)
-```
-
-#### Notes
-
-* Points are showing effects, line ranges are showing confidence intervals (so showing some aspects of uncertainty).
-* There's still lots of information that this doesn't show (such as sample size or number of studies which are part of uncertainty)
-* There's multiple points for some because there are sub-categories for 'video games' (e.g., violent video games, or educational), but it makes the plot a bit messy.
-* There's some issues with a few of the data points that I'll resolve in the original dataset
-
-### Idea Two
-
-Using position as the main idiom.
-
-```{r, layout="l-page", fig.height=6, fig.width=8}
-p <- df %>%
-  filter(general_exposure == "Video games") %>%
-  ggplot(aes(
-    y = log(n), x = r,
-    color = general_outcome,
-    text = plain_language_outcome
-  )) +
-  geom_point(size = 5) +
   theme_minimal()
-
-plotly::ggplotly(p, tooltip = "text")
 ```
-#### Notes
 
-* Effect size indicated by horizontal position, but now missing uncertainty from the confidence intervals.
-* Incorporates a different form of uncertainty (i.e., sample size) on the y-axis
-* I guess it could incorporate other data through shape, but it looks a bit messy to message
+**Notes**
 
-<aside>
+* Still need a PCA or similar for study quality. This is just using sample size.
+
+### Using another heatmap
+
 ```{r}
 df %>%
   filter(general_exposure == "Video games") %>%
-  ggplot(aes(x = log(n), y = r, color = general_outcome, shape = age_group)) +
-  geom_point(size = 10) +
+  group_by(plain_language_exposure, plain_language_outcome) %>%
+  summarise(r = mean(r)) %>%
+  ggplot(aes(x = plain_language_exposure, y = plain_language_outcome, fill = r)) +
+  geom_tile() +
+  scale_fill_distiller(palette = "RdBu", limits = c(-.5, .5)) +
   theme_minimal()
 ```
-</aside>
+
+I think I prefer the linerange.
 
 ## Task Three
 
@@ -236,7 +261,7 @@ df %>%
 
 This is just the same as Task Two. E.g.,:
 
-```{r, layout="l-page", fig.height=6, fig.width=8}
+```{r, fig.height=6, fig.width=8}
 p <- df %>%
   filter(general_exposure == "Video games", age_group == "Children") %>%
   ggplot(aes(
@@ -305,6 +330,66 @@ df %>%
   theme(strip.text.x = element_text(hjust = 0.00, face = "bold"))
 ```
 
+```{r}
+p_df <- df %>%
+  filter(general_outcome == "Body composition") %>%
+  select(
+    general_exposure, general_outcome, plain_language_exposure,
+    plain_language_outcome, r, r_ub, r_lb, age_group, n
+  ) %>%
+  mutate(plain_language_exposure = fct_reorder(plain_language_exposure, r)) %>%
+  arrange(plain_language_exposure, r) %>%
+  group_by(general_outcome, plain_language_exposure) %>%
+  mutate(
+    effect_id = row_number(),
+    group_id = cur_group_id(),
+    median_effect = median(r)
+  ) %>%
+  ungroup() %>%
+  arrange(desc(median_effect), plain_language_exposure, desc(r)) %>%
+  mutate(
+    aux = row_number()
+  ) %>%
+  group_by(plain_language_exposure) %>%
+  mutate(breaks = median(aux)) %>%
+  ungroup() %>%
+  mutate(
+    stripe = factor(if_else(group_id %% 2 == 0, 1, 0))
+  )
+
+ggplot(p_df, aes(
+  x = aux,
+  y = r
+)) +
+  geom_linerange(aes(
+    ymin = r_lb,
+    ymax = r_ub,
+    col = age_group
+  ), size = 3) +
+  geom_point(aes(
+    size = log(n)
+  ),
+  shape = 21,
+  color = "white", stroke = 0.5, fill = "black"
+  ) +
+  geom_rect(
+    aes(
+      xmax = aux + 0.5, xmin = aux - 0.5,
+      ymin = -1, ymax = 1, fill = stripe
+    ),
+    alpha = 0.4
+  ) +
+  scale_y_continuous(name = "Correlation", limits = c(-1, 1)) +
+  scale_x_continuous("Outcome",
+    labels = unique(p_df$plain_language_exposure),
+    breaks = unique(p_df$breaks)
+  ) +
+  scale_fill_manual(values = c("white", "grey50"), guide = "none") +
+  scale_size(guide = "none") +
+  coord_flip() +
+  theme_minimal()
+```
+
 ## Task Three
 
 > Visualise the uncertainty for the selected exposure.
@@ -325,7 +410,7 @@ I've realised that I'll need to relink the original study-level data back to thi
 
 Otherwise, one option would be to display a relationship and show the forest plots in the tooltip?
 
-```{r, layout="l-page", fig.height=6, fig.width=8}
+```{r, fig.height=6, fig.width=8}
 p <- df %>%
   filter(general_outcome == "Body composition") %>%
   ggplot(aes(
