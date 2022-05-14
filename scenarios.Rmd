@@ -1,17 +1,14 @@
 ---
 title: "Screen Time Data Viz"
-description: | 
-  Draft ideas and example idioms
-author:
-  - first_name: "Taren"
-    last_name: "Sanders"
-    url: https://github.com/tarensanders
+author: Taren Sanders
 date: "`r Sys.Date()`"
-repository_url: https://github.com/tarensanders/screen_viz
 output:
-  distill::distill_article:
-    toc: true
-    toc_depth: 2
+  rmdformats::html_clean:
+    self_contained: true
+    thumbnails: true
+    lightbox: true
+    gallery: false
+    highlight: tango
 ---
 
 ```{r setup, echo = FALSE}
@@ -75,99 +72,84 @@ df <- df %>%
 
 > Explore the exposures that there are evidence for.
 
-Not really sure how to do this one. I guess one option is a bar chart of the exposures by the number of outcomes associated (and vice-versa).
+### Effect Counts
 
-### Idea One
+#### General Categories
 
-```{r, layout="l-page"}
-df_exp <- df %>%
-  distinct(general_exposure, plain_language_outcome) %>%
-  group_by(general_exposure) %>%
+```{r hm-counts, layout="l-page"}
+df %>%
+  group_by(general_exposure, general_outcome) %>%
   summarise(n = n()) %>%
-  arrange(n) %>%
-  ungroup() %>%
-  mutate(
-    id = row_number(),
-    label_angle = 90 - 360 * (id - 0.5) / nrow(.),
-    label_hjust = if_else(label_angle < -90, 1, 0),
-    label_angle = if_else(label_angle < -90, label_angle + 180, label_angle)
-  )
-
-p1 <- ggplot(
-  df_exp,
-  aes(
-    x = as.factor(id), y = n
-  )
-) +
-  geom_bar(stat = "identity") +
-  ylim(-100, 120) +
-  labs(title = "Exposures") +
+  ggplot(aes(x = general_exposure, y = general_outcome, fill = n)) +
+  geom_tile() +
   theme_minimal() +
-  theme(
-    legend.position = "none",
-    axis.text = element_blank(),
-    axis.title = element_blank(),
-    panel.grid = element_blank(),
-    # plot.margin = unit(rep(-1, 4), "cm")
-  ) +
-  coord_polar(start = 0) +
-  geom_text(
-    aes(
-      x = id, y = n + 10,
-      label = general_exposure, hjust = label_hjust,
-      angle = label_angle
-    ),
-    size = 4
-  )
-
-df_out <- df %>%
-  distinct(general_outcome, plain_language_exposure) %>%
-  group_by(general_outcome) %>%
-  summarise(n = n()) %>%
-  arrange(n) %>%
-  ungroup() %>%
-  mutate(
-    id = row_number(),
-    label_angle = 90 - 360 * (id - 0.5) / nrow(.),
-    label_hjust = if_else(label_angle < -90, 1, 0),
-    label_angle = if_else(label_angle < -90, label_angle + 180, label_angle)
-  )
-
-p2 <- ggplot(
-  df_out,
-  aes(
-    x = as.factor(id), y = n
-  )
-) +
-  geom_bar(stat = "identity") +
-  ylim(-100, 120) +
-  labs(title = "Outcomes") +
-  theme_minimal() +
-  theme(
-    legend.position = "none",
-    axis.text = element_blank(),
-    axis.title = element_blank(),
-    panel.grid = element_blank(),
-    # plot.margin = unit(rep(-1, 4), "cm")
-  ) +
-  coord_polar(start = 0) +
-  geom_text(
-    aes(
-      x = id, y = n + 10,
-      label = general_outcome, hjust = label_hjust,
-      angle = label_angle
-    ),
-    size = 4
-  )
-
-p1 + p2
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 ```
 
-### Notes
+#### Subcategories
 
-* I think it's OK not to have scales and things on how ever this one is shown.
-The absolute values don't really matter.
-* I don't really like this, very open to other ideas.
+Don't think this works.
+
+```{r hm-subcounts, layout="l-page"}
+df %>%
+  group_by(plain_language_exposure, plain_language_outcome) %>%
+  summarise(n = n()) %>%
+  ggplot(aes(x = plain_language_exposure, y = plain_language_outcome, fill = n)) +
+  geom_tile() +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+
+### Effect Sizes
+
+#### General Categories
+
+I think this is my preferred option, although it does have some issues.
+
+```{r hm-es, layout="l-page"}
+df %>%
+  group_by(general_exposure, general_outcome) %>%
+  summarise(r = mean(r)) %>%
+  ggplot(aes(x = general_exposure, y = general_outcome, fill = r)) +
+  geom_tile() +
+  scale_fill_distiller(palette = "RdBu", limits = c(-.5, .5)) +
+  theme_minimal()
+```
+
+**Problems**
+
+* The only way to reduce the data (that I could think of) is to take the mean, but that gives a pretty inaccurate view of some of the categories.
+
+
+#### Subcategories
+
+Don't think this works.
+
+```{r hm-subes, layout="l-page"}
+df %>%
+  group_by(plain_language_exposure, plain_language_outcome) %>%
+  summarise(r = mean(r)) %>%
+  ggplot(aes(x = plain_language_exposure, y = plain_language_outcome, fill = r)) +
+  geom_tile() +
+  scale_fill_distiller(palette = "RdBu", limits = c(-.5, .5)) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+#### Mixed General and Subcategories
+
+This also works, especially if I could combine the subcategories to show the 'range' of effect sizes. Could not come up with a way to do that though.
+
+```{r hm-mixes, layout="l-page"}
+df %>%
+  group_by(general_exposure, plain_language_outcome) %>%
+  summarise(r = mean(r)) %>%
+  ggplot(aes(x = general_exposure, y = plain_language_outcome, fill = r)) +
+  geom_tile() +
+  scale_fill_distiller(palette = "RdBu", limits = c(-.5, .5)) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+
 
 ## Task Two
 
