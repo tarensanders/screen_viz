@@ -1,0 +1,46 @@
+---
+title: "Screen Time Data Viz"
+author: Taren Sanders
+date: "`r Sys.Date()`"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+pkgload::load_all(".")
+```
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+df <- readr::read_csv("https://raw.githubusercontent.com/Motivation-and-Behaviour/screen_umbrella/main/supplementary_files/Complete%20Effects%20Data.csv") # nolint
+df <- tidy_data(df)
+```
+
+Page 1
+===============================================================================
+
+Inputs {.sidebar data-width=300}
+-----------------------------------------------------------------------
+
+### Settings
+
+```{r}
+checkboxInput("subcategories", "Show subcategories", FALSE)
+selectInput("show", "Show units as",
+  list("Counts", "Effect Sizes"),
+  selected = "Effect Sizes"
+)
+```
+
+
+Column {data-width=700}
+-----------------------------------------------------------------------
+
+```{r}
+renderPlot({
+  make_heatmap(df, input$subcategories, input$show)
+})
+```

@@ -21,7 +21,6 @@ knitr::opts_chunk$set(
 
 ```{r load-data}
 library(tidyverse)
-library(patchwork)
 df <- read_csv("https://raw.githubusercontent.com/Motivation-and-Behaviour/screen_umbrella/main/supplementary_files/Complete%20Effects%20Data.csv") # nolint
 ```
 

@@ -1,0 +1,8 @@
+^renv$
+^renv\.lock$
+^screen_viz\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^docs$
+^\.lintr$
+^rsconnect$

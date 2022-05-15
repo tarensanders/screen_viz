@@ -1,0 +1,25 @@
+Package: screenviz
+Title: Visualise the Screen Time Review of Reviews Data
+Version: 0.0.0.9000
+Authors@R: 
+    person("Taren", "Sanders", , "Taren.Sanders@acu.edu.au", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-4504-6008"))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Imports: 
+    dplyr,
+    forcats,
+    ggplot2,
+    magrittr,
+    pkgload,
+    readr,
+    rlang,
+    shiny,
+    stringr
+Suggests: 
+    flexdashboard,
+    rmarkdown,
+    rsconnect
