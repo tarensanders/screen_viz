@@ -20,14 +20,19 @@ jobs:
         with:
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-renv@v2
+      # - uses: r-lib/actions/setup-renv@v2
 
-      - name: Install rsconnect
-        run: install.packages("rsconnect")
-        shell: Rscript {0}
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with: 
+          extra-packages: any::rsconnect 
+          needs: check 
+
+      # - name: Install rsconnect
+      #   run: install.packages("rsconnect")
+      #   shell: Rscript {0}
 
       - name: Authorize and deploy app
         run: |
-          rsconnect::setAccountInfo(${{ secrets.RSCONNECT_USER }}, ${{ secrets.RSCONNECT_TOKEN }}, ${{ secrets.RSCONNECT_SECRET }})
+          rsconnect::setAccountInfo("${{ secrets.RSCONNECT_USER }}", "${{ secrets.RSCONNECT_TOKEN }}", "${{ secrets.RSCONNECT_SECRET }}")
           rsconnect::deployDoc("index.Rmd")
         shell: Rscript {0}
