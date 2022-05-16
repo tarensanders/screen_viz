@@ -33,6 +33,6 @@ jobs:
 
       - name: Authorize and deploy app
         run: |
-          rsconnect::setAccountInfo("${{ secrets.RSCONNECT_USER }}", "${{ secrets.RSCONNECT_TOKEN }}", "${{ secrets.RSCONNECT_SECRET }}")
+          rsconnect::setAccountInfo(${{ secrets.RSCONNECT_USER }}, ${{ secrets.RSCONNECT_TOKEN }}, ${{ secrets.RSCONNECT_SECRET }})
           rsconnect::deployDoc("index.Rmd")
         shell: Rscript {0}
