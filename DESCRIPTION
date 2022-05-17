@@ -20,6 +20,5 @@ Imports:
     shiny,
     stringr
 Suggests: 
-    flexdashboard,
     rmarkdown,
     rsconnect

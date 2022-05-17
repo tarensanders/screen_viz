@@ -15,7 +15,7 @@ pkgload::load_all(".")
 
 ```{r global, include=FALSE}
 # load data in 'global' chunk so it can be shared by all users of the dashboard
-df <- readr::read_csv("https://raw.githubusercontent.com/Motivation-and-Behaviour/screen_umbrella/main/supplementary_files/Complete%20Effects%20Data.csv") # nolint
+df <- readr::read_csv("https://raw.githubusercontent.com/Motivation-and-Behaviour/screen_umbrella/main/supplementary_files/Supplementary%20File%202%20-%20Complete%20Effects%20Data.csv") # nolint
 df <- tidy_data(df)
 ```
 
