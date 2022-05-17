@@ -10,7 +10,9 @@ jobs:
   shiny-deploy:
     runs-on: ubuntu-latest
     env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_PAT:       ${{ secrets.GITHUB_TOKEN }}
+      RSCONNECT_TOKEN:  ${{ secrets.RSCONNECT_TOKEN }}
+      RSCONNECT_SECRET: ${{ secrets.RSCONNECT_SECRET }}
     steps:
       - uses: actions/checkout@v2
 
@@ -33,6 +35,6 @@ jobs:
 
       - name: Authorize and deploy app
         run: |
-          rsconnect::setAccountInfo(${{ secrets.RSCONNECT_USER }}, ${{ secrets.RSCONNECT_TOKEN }}, ${{ secrets.RSCONNECT_SECRET }})
-          rsconnect::deployDoc("index.Rmd")
+          rsconnect::setAccountInfo(name = 'tarensanders', token = Sys.getenv("RSCONNECT_TOKEN"), secret = Sys.getenv("RSCONNECT_SECRET"))
+          rsconnect::deployApp()
         shell: Rscript {0}
