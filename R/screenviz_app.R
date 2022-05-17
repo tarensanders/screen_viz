@@ -1,3 +1,9 @@
+
+#' Run App
+#'
+#' Run the app.
+#'
+#' @return NULL
 screenviz_app <- function() {
   # Load and tidy the data
   dataset <- load_data()

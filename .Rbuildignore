@@ -7,3 +7,5 @@
 ^\.lintr$
 ^rsconnect$
 ^\.github$
+^app\.R$
+^index\.Rmd$

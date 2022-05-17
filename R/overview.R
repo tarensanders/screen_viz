@@ -1,3 +1,9 @@
+
+#' Overview Module UI
+#'
+#' @param id Namespace ID.
+#'
+#' @return A Shiny UI module.
 overview_ui <- function(id) {
   shiny::fluidPage(
     shiny::titlePanel("Overview"),
@@ -24,6 +30,13 @@ overview_ui <- function(id) {
 }
 
 
+
+#' Overview Module Server
+#'
+#' @param id Namespace ID.
+#' @param dataset The clean dataset.
+#'
+#' @return A Shiny UI module.
 overview_server <- function(id, dataset) {
   shiny::moduleServer(
     id,
@@ -36,6 +49,12 @@ overview_server <- function(id, dataset) {
 }
 
 
+
+#' Overview Module App
+#'
+#' For testing purposes only
+#'
+#' @return NULL.
 overview_app <- function() {
   dataset <- load_data()
 

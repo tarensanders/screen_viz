@@ -4,10 +4,8 @@
 #' Load the dataset and convert to tidy format.
 #'
 #' @importFrom rlang .data
+#'
 #' @export
-#'
-#' @param df The raw dataset.
-#'
 #' @return The tidy dataset
 load_data <- function() {
   df <- readr::read_csv("https://raw.githubusercontent.com/Motivation-and-Behaviour/screen_umbrella/main/supplementary_files/Supplementary%20File%202%20-%20Complete%20Effects%20Data.csv") # nolint

@@ -6,11 +6,8 @@
 \usage{
 load_data()
 }
-\arguments{
-\item{df}{The raw dataset.}
-}
 \value{
-They tidy dataset
+The tidy dataset
 }
 \description{
 Load the dataset and convert to tidy format.
