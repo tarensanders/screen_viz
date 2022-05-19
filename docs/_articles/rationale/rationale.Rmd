@@ -1,0 +1,183 @@
+---
+title: "Rationale"
+description: |
+  Project rationale, goals, and target scenarios.
+author:
+  - name: Taren Sanders 
+    url: https://github.com/tarensanders
+    affiliation: IPPE, Australian Catholic University
+    affiliation_url: https://www.acu.edu.au/research-and-enterprise/our-research-institutes/institute-for-positive-psychology-and-education
+    orcid_id: 0000-0002-4504-6008
+date: "`r Sys.Date()`"
+bibliography: ScreenViz.bib
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Introduction
+
+## Screen time is a complex issue
+
+Children's engagement in excessive screen time is the number one concern Australian parents have about their children's health and behaviour, ahead of nutrition, bullying, and physical inactivity [@rhodes2015top].
+However, screen time is a complex issue.
+While some forms of screen use (e.g., television viewing) may be detrimental to health and well-being [@haleScreenTimeSleep2015;@sweetserActivePassiveScreen2012], evidence for other forms of screen exposure (e.g., video games or online communication, such as Zoom) remains less certain and, in some cases, may even be beneficial [@liEarlyChildhoodComputer2004;@warburton2017children].
+Further confusing the issue is that screen time guidelines [e.g., @australiangovernmentPhysicalActivityExercise2021;@whoGuidelinesPhysicalActivity2019] typically focus on only the duration of screen time, despite mounting evidence that the issue is more nuanced and the risks might be more closely associated with the content and environment [@elsonPolicyStatementsMedia2019].
+
+Hampering the ability for parents to make informed decision is a lack of comprehensive and contemporary evidence.
+Indeed, in a 2019 editorial in the leading medical journal *The Lancet* [@thelancetSocialMediaScreen2019], the editor wrote "Our understanding of the benefits, harms, and risks of our rapidly changing digital landscape is sorely lacking.", and a *Nature Human Behaviour* editor described it as "a defining question of our age" [@naturehumanbehaviourScreenTimeHow2019].
+Without comprehensive information, it is no wonder that parents are struggling to make informed decisions [@elsonPolicyStatementsMedia2019].
+
+Meta-analyses---the process of combining multiple studies together to improve the precision of the estimated effect size [@higginsCochraneHandbookSystematic2021]---are considered the highest form of scientific evidence [@straussEvidencebasedMedicineHow2008].
+To address the lack of comprehensive information on the risks and benefits of screen time, our team collated and synthesised all existing meta-analytic evidence on the influence of screen time on children's health, education, and well-being outcomes.
+We reanalysed these studies to ensure the effect sizes were comparable, giving us a set of almost 200 effect sizes.
+However, while we now have a comprehensive set of information, communicating this information to parents is still a challenge.
+
+## Communicating science is hard
+
+For people to make informed decisions, they need to understand the benefits, risks, and other costs of their decision [@fischhoffSciencesScienceCommunication2013].
+But, communicating information in such a way that allows people to make these decisions is challenging.
+According to @fischhoffSciencesScienceCommunication2013, good science communication can be broken down into four tasks:
+
+> **Task 1.** Identify the science most relevant to the decisions that people face.
+>
+> **Task 2.** Determine what people already know.
+>
+> **Task 3.** Design communications to fill the critical gaps (between what people know and need to know).
+>
+> **Task 4.** Evaluate the adequacy of those communications.
+>
+> \hfill - @fischhoffSciencesScienceCommunication2013, pg. 14034
+
+As described above, our team has already completed Task 1, and plenty of research exists regarding parents' knowledge around screen time [i.e., Task 2, see for example @hamiltonExploringParentsBeliefs2015].
+Therefore, this project will focus on Task 3: creating a method to communicate science to fill an information gap.
+
+## Visualising data can make it easier to communicate
+
+One way to communicate information that makes it simpler for people to make informed decisions is to visualise data [@munznerVisualizationAnalysisDesign2015;@engebretsenWhatWorkCan2020].
+Data visualisation makes it simpler for people to parse the information provided, and use it to arrive at a sound decision.
+There are numerous examples of this occurring.
+For example, *The New York Times* used an interactive visualisation to show the pros and cons of renting versus buying a house [@bostockItBetterBuy2014]---a decision which can vary by a number of factors.
+The website *Information is beautiful* used visualisation to help people understand which treatments for COVID-19 have evidence for benefits, compared to those that do not [@informationisbeautifulCOVID19CoronaVirusInfographic2021].
+
+The goal of this project, therefore, is to create a visualisation that fills the information gap for parents regarding children's screen time behaviours.
+
+## Research Question
+
+The research question for this project is: 
+
+> Can we develop a visualisation to help parents weigh the risks and benefits of screen time on children's health, education, and well-being outcomes?
+
+In the process of addressing this research question, I will also investigate the following questions:
+
+> 1. What are the appropriate task abstractions to address the research question?
+> 1. What idioms best address the task abstractions, in order to address the research question?
+
+# Methods and Materials
+
+## Dataset
+
+The dataset for this project comes from an umbrella review (also known as a meta-meta-analysis) of the literature on screen time.
+To derive the dataset, we systematically searched 12 academic databases for meta-analyses.
+Eligible studies were identified following screening in duplicate, and all effect sizes were extracted.
+If the meta-analyses provided the original study data, these were also extracted.
+Where two or more meta-analyses analysed the same exposure/outcome combination, we selected the effect with the largest total sample size.
+Effect sizes were converted to correlations ($r$) using appropriate formulas.
+We examined heterogeneity of the effect sizes using a the $I^2$ measure, and tested for evidence of publication bias using Egger's test and a test of excess significance.
+
+The dataset has the following features:
+
+* **Effect sizes with uncertainties.** For each exposure/outcome combination, a correlation coefficient and confidence interval are provided.
+Where possible, the effect sizes are drawn from re-analysis of the original study data, with a conversion of the original meta-analysis effect size used as a backup.
+* **Heterogeneity of the effect sizes.** The $I^2$ values measures the extent to which studies within a meta-analysis are consistent.
+A high $I^2$ indicates a large amount of unexplained variability in the finding (that is, the effect may not occur for all participants).
+* **Study characteristics.** Effect sizes drawn from many large studies will produce more precise effect estimates than a few small studies.
+The dataset includes the total sample size ($N$) and the number of studies the pooled effect is drawn from ($k$).
+* **Age group.** As it is reasonable for the effect of screen time to vary by age, the age group for each effect size is provided.
+* **Evidence of statistical credibility.** Pooled effect sizes are only as good as the studies from which they are drawn.
+For example, if only positive studies are published but negative studies are not, the pooled effect size will show a positive result where none exists (known as publication bias).
+The dataset includes tests for publication bias.
+
+## Methodology
+
+The methodology for this project will follow the steps outlined by @munznerVisualizationAnalysisDesign2015.
+For each piece of information the users sees, a three step process is followed:
+
+1. Identify **what** data should be shown to the user;
+1. Identify **why** a user would be using a visualisation tool to view this data (i.e., *task abstraction*); and, 
+1. Identify **how** the data can best be displayed (i.e., which *idiom* to use).
+
+These series of steps can be chained together, so the output of one step can be used as input to the next step.
+
+There are a number of ways to approach each of these steps.
+One approach for determining the *what* and the *why* aspects is to consult with domain experts or stakeholders (in this case, parents).
+Given the contained time limit on the project, consulting with stakeholders is difficult, so I will instead rely on my own and others domain expertise.
+
+The initial version of the system will aim to include 3-5 task abstractions.
+Some possible examples of the included abstractions could be:
+
+* Comparing risks and benefits for a specific outcome (e.g., video games);
+* Identifying which evidence is strong and which evidence is weak; or
+* Identifying ways that an exposure can be modified to reduce a risk (e.g., co-viewing may decrease risks associated with television).
+
+## Expected Outcome
+
+The expected outcome for this project is a visualisation system that can help parents make informed decisions about their children's screen time.
+Given how prevalent concerns around screen time are, ideally the system could be given to a third-party with greater access to parents (e.g., the Raising Children Network).
+Further, given the rapid rate at which screen time evidence accumulates, the system would ideally be robust to constantly updated information, with little maintenance to maintain.
+That is, if new evidence became available for an exposure or outcome, it could be rapidly incorporated into the visualisation system.
+
+
+## Ethics
+
+As there are no research participants in this project and the dataset consists only of pooled effect sizes, there is no requirement for Human Research Ethics Committee approval.
+
+## Timeline
+
+A timeline for this project is provided in Figure \@ref(fig:gantt).
+
+```{r gantt, echo=FALSE, message=FALSE, warning=FALSE, fig.cap="Gantt chart for the capstone project."}
+project <- tibble::tribble(
+  # nolint start
+  ~wp, ~activity, ~start_date, ~end_date,
+  "Course Assessments", "Research Proposal", "2022-03-01", "2022-03-20",
+  "Course Assessments", "Literature Review", "2022-03-20", "2022-04-03",
+  "Course Assessments", "Analysis Presentation", "2022-04-10", "2022-04-24",
+  "Course Assessments", "Progress Presentation", "2022-05-01", "2022-05-15",
+  "Course Assessments", "Final Presentation", "2022-05-30", "2022-06-12",
+  "Course Assessments", "Final Report", "2022-06-04", "2022-06-19",
+  "Project Development", "Draft Task Abstractions", "2022-03-21", "2022-03-28",
+  "Project Development", "Domain Expert Feedback", "2022-03-28", "2022-04-04",
+  "Project Development", "Domain Expert Feedback", "2022-05-08", "2022-05-15",
+  "Project Development", "Domain Expert Feedback", "2022-06-02", "2022-06-09",
+  "Project Development", "Task Abstraction Refinement", "2022-04-04", "2022-04-11",
+  "Project Development", "Determine Idioms", "2022-04-04", "2022-04-18",
+  "Project Development", "Research Software Systems", "2022-04-11", "2022-04-18",
+  "Project Development", "Code System", "2022-04-18", "2022-06-12"
+  # nolint end
+)
+
+ganttrify::ganttrify(
+  project = project,
+  by_date = TRUE,
+  exact_date = TRUE,
+  # size_text_relative = 1.2,
+  month_number_label = FALSE,
+  font_family = "sans"
+) +
+  ggplot2::labs(title = "Capstone Project Timeline") +
+  ggplot2::theme(
+    plot.title.position = "plot",
+    plot.title = ggplot2::element_text(
+      family = "sans",
+      size = 16,
+      face = "bold"
+    )
+  )
+```
+
+
+
+

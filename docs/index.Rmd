@@ -29,11 +29,11 @@ You can always turn these off.
 
 ## Links 🔗
 
-### [Project Rationale](rationale.html)
+### [Project Rationale](articles/rationale/index.html)
 
 Contains the rationale for the project and the objectives.
 
-### [Project Sketches](sketches.html)
+### [Project Sketches](articles/sketches/index.html)
 
 These are the early mockups of the design.
 The focus is mostly on what idiom best displays the information, rather than on the actual style and design.
