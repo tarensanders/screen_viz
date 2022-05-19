@@ -2,7 +2,7 @@ name: "screenviz"
 title: "Screen Time Vizualization Development"
 description: |
   screenviz
-output_dir: "_site"
+output_dir: "."
 base_url: https://tarensanders.github.io/screen_viz
 repository_url: https://github.com/tarensanders/screen_viz
 source_url: true
