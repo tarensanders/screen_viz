@@ -50,16 +50,17 @@ pre.numberSource code > span > a:first-child::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {   }
+  { color: #00769e; background-color: #f1f3f5; }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
+code span { color: #00769e; } /* Normal */
 code span.al { color: #ad0000; } /* Alert */
 code span.an { color: #5e5e5e; } /* Annotation */
-code span.at { } /* Attribute */
+code span.at { color: #657422; } /* Attribute */
 code span.bn { color: #ad0000; } /* BaseN */
 code span.bu { } /* BuiltIn */
-code span.cf { color: #007ba5; } /* ControlFlow */
+code span.cf { color: #00769e; } /* ControlFlow */
 code span.ch { color: #20794d; } /* Char */
 code span.cn { color: #8f5902; } /* Constant */
 code span.co { color: #5e5e5e; } /* Comment */
@@ -73,9 +74,9 @@ code span.fl { color: #ad0000; } /* Float */
 code span.fu { color: #4758ab; } /* Function */
 code span.im { } /* Import */
 code span.in { color: #5e5e5e; } /* Information */
-code span.kw { color: #007ba5; } /* Keyword */
+code span.kw { color: #00769e; } /* Keyword */
 code span.op { color: #5e5e5e; } /* Operator */
-code span.ot { color: #007ba5; } /* Other */
+code span.ot { color: #00769e; } /* Other */
 code span.pp { color: #ad0000; } /* Preprocessor */
 code span.sc { color: #5e5e5e; } /* SpecialChar */
 code span.ss { color: #20794d; } /* SpecialString */
@@ -1030,10 +1031,6 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     margin-top: 1.5em;
   }
 
-  .figure img {
-    width: 100%;
-  }
-
   .figure .caption {
     color: rgba(0, 0, 0, 0.6);
     font-size: 12px;
@@ -1863,6 +1860,12 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
       // hoverable references
       $('span.citation[data-cites]').each(function() {
+        if ($(this).children()[0].nodeName == "D-FOOTNOTE") {
+          var fn = $(this).children()[0]
+          $(this).html(fn.shadowRoot.querySelector("sup"))
+          $(this).id = fn.id
+          fn.remove()
+        }
         var refs = $(this).attr('data-cites').split(" ");
         var refHtml = refs.map(function(ref) {
           return "<p>" + $('#ref-' + ref).html() + "</p>";
@@ -1877,6 +1880,31 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
           placement: 'bottom-start'
         });
       });
+
+      // fix footnotes in tables (#411)
+      // replacing broken distill.pub feature
+      $('table d-footnote').each(function() {
+        // we replace internal showAtNode methode which is triggered when hovering a footnote
+        this.hoverBox.showAtNode = function(node) {
+          // ported from https://github.com/distillpub/template/pull/105/files
+          calcOffset = function(elem) {
+              let x = elem.offsetLeft;
+              let y = elem.offsetTop;
+              // Traverse upwards until an `absolute` element is found or `elem`
+              // becomes null.
+              while (elem = elem.offsetParent && elem.style.position != 'absolute') {
+                  x += elem.offsetLeft;
+                  y += elem.offsetTop;
+              }
+
+              return { left: x, top: y };
+          }
+          // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetTop
+          const bbox = node.getBoundingClientRect();
+          const offset = calcOffset(node);
+          this.show([offset.left + bbox.width, offset.top + bbox.height]);
+        }
+      })
 
       // clear polling timer
       clearInterval(tid);
@@ -1976,6 +2004,8 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     // mark non-body figures created by knitr chunks as 100% width
     $('.layout-chunk').each(function(i, val) {
       var figures = $(this).find('img, .html-widget');
+      // ignore leaflet img layers (#106)
+      figures = figures.filter(':not(img[class*="leaflet"])')
       if ($(this).attr('data-layout') !== "l-body") {
         figures.css('width', '100%');
       } else {
@@ -1998,7 +2028,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     // get rid of index.html references in header
     if (window.location.protocol !== "file:") {
       $('.distill-site-header a[href]').each(function(i,val) {
-        $(this).attr('href', $(this).attr('href').replace("index.html", "./"));
+        $(this).attr('href', $(this).attr('href').replace(/^index[.]html/, "./"));
       });
     }
 
@@ -2037,7 +2067,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </script>
 
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.12/header-attrs.js"></script>
+  <script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
   <link href="site_libs/tippy-6.2.7/tippy-light-border.css" rel="stylesheet" />
@@ -2049,9 +2079,9 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_site_in_header-->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      if (!/posts/.test(location.pathname)) {
-        return;
-      }
+      // if (!/posts/.test(location.pathname)) {
+      //   return;
+      // }
 
       var script = document.createElement("script");
       script.src = "https://giscus.app/client.js";
@@ -2131,56 +2161,31 @@ Development
 <h1>Screen Time Vizualization Development</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>Project logs and notes for the development of the Screen Time
-Vizualization.</p></p>
+<p><p>Project logs and notes for the development of the Screen Time Vizualization.</p></p>
 </div>
 
 
 <div class="d-article">
 <h1 id="welcome">Welcome 👋</h1>
-<p>The purpose of this site is to host all of the files and notes
-related to the development of the Screen Time Vizualization.</p>
+<p>The purpose of this site is to host all of the files and notes related to the development of the Screen Time Vizualization.</p>
 <h2 id="providing-feedback">Providing Feedback</h2>
-<p>Providing feedback on interactive documents is tricky. At the bottom
-of each page is a <a href="https://giscus.app/">giscus</a> comment box.
-Comments made here are sent to the <a
-href="https://github.com/tarensanders/screen_viz/discussions/categories/comments">discussions</a>
-page on GitHub. In order to add comments, you will need to sign in to
-GitHub and authorise the <a
-href="https://github.com/marketplace/giscus">giscus app</a> to <a
-href="https://docs.github.com/en/developers/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps">make
-comments on your behalf</a> (don’t worry, this is safe). Here is my
-proposed workflow:</p>
+<p>Providing feedback on interactive documents is tricky. At the bottom of each page is a <a href="https://giscus.app/">giscus</a> comment box. Comments made here are sent to the <a href="https://github.com/tarensanders/screen_viz/discussions/categories/comments">discussions</a> page on GitHub. In order to add comments, you will need to sign in to GitHub and authorise the <a href="https://github.com/marketplace/giscus">giscus app</a> to <a href="https://docs.github.com/en/developers/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps">make comments on your behalf</a> (don’t worry, this is safe). Here is my proposed workflow:</p>
 <ul>
 <li>For each piece of feedback or idea, create a new comment.</li>
-<li>You can reply to someone else’s (or your own) comment to keep ideas
-together, or upvote it if you think it is a good idea.</li>
-<li>You’ll recieve notifications from GitHub (à la Google Docs) when
-someone responds to your comment. You can always turn these off.</li>
-<li>To action feedback, I’ll create a GitHub issue linked to the
-comment, and respond to the comment when that issue is resolved.</li>
+<li>You can reply to someone else’s (or your own) comment to keep ideas together, or upvote it if you think it is a good idea.</li>
+<li>You’ll recieve notifications from GitHub (à la Google Docs) when someone responds to your comment. You can always turn these off.</li>
+<li>To action feedback, I’ll create a GitHub issue linked to the comment, and respond to the comment when that issue is resolved.</li>
 </ul>
 <h2 id="links">Links 🔗</h2>
-<h3 id="project-rationale"><a
-href="articles/rationale/index.html">Project Rationale</a></h3>
+<h3 id="project-rationale"><a href="articles/rationale/index.html">Project Rationale</a></h3>
 <p>Contains the rationale for the project and the objectives.</p>
-<h3 id="project-sketches"><a href="articles/sketches/index.html">Project
-Sketches</a></h3>
-<p>These are the early mockups of the design. The focus is mostly on
-what idiom best displays the information, rather than on the actual
-style and design. That is: “is this information clearer as a bar chart
-or heatmap?”, rather than “does this look good?”.</p>
+<h3 id="project-sketches"><a href="articles/sketches/index.html">Project Sketches</a></h3>
+<p>These are the early mockups of the design. The focus is mostly on what idiom best displays the information, rather than on the actual style and design. That is: “is this information clearer as a bar chart or heatmap?”, rather than “does this look good?”.</p>
 <h3 id="draft-app"><a href="draftapp.html">Draft App</a></h3>
-<p>When an idiom design is finalised, I’ll translate it into a page in a
-shiny app. The early builds are meant to be quick, so expect default
-styling and clunky interactions. These get resolved once all of the
-screens are built.</p>
-<h3 id="repository"><a
-href="https://github.com/tarensanders/screen_viz">Repository</a></h3>
-<p>All of the code, website pages, feedback, and issues are hosted on
-GitHub.</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>When an idiom design is finalised, I’ll translate it into a page in a shiny app. The early builds are meant to be quick, so expect default styling and clunky interactions. These get resolved once all of the screens are built.</p>
+<h3 id="repository"><a href="https://github.com/tarensanders/screen_viz">Repository</a></h3>
+<p>All of the code, website pages, feedback, and issues are hosted on GitHub.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
