@@ -1,0 +1,27 @@
+name: "screenviz"
+title: "Screen Time Vizualization Development"
+description: |
+  screenviz
+output_dir: "_site"
+base_url: https://tarensanders.github.io/screen_viz
+repository_url: https://github.com/tarensanders/screen_viz
+source_url: true
+navbar:
+  right:
+    - text: "Home"
+      href: index.html
+    - text: "Development"
+      menu:
+        - text: "Rationale"
+          href: rationale.html
+        - text: "Sketches"
+          href: sketches.html
+        - text: "---"
+        - text: "Draft App"
+          href: draftapp.html
+    - icon: fab fa-github
+      href: https://github.com/tarensanders/screen_viz
+output: 
+  distill::distill_article:
+    includes:
+      in_header: giscus.html

@@ -1,0 +1,57 @@
+{
+  "articles": [
+    {
+      "path": "about.html",
+      "title": "About this site",
+      "description": "Some additional details about the website",
+      "author": [],
+      "contents": "\r\n\r\n\r\n\r\n",
+      "last_modified": "2022-05-19T14:36:15+10:00"
+    },
+    {
+      "path": "draftapp.html",
+      "title": "Draft App",
+      "description": "Expect lots of changes here.\n",
+      "author": [],
+      "contents": "\r\n\r\n\r\n\r\n\r\n\r\n",
+      "last_modified": "2022-05-19T14:36:15+10:00"
+    },
+    {
+      "path": "index.html",
+      "title": "screenviz",
+      "description": "Welcome to the website. I hope you enjoy it!\n",
+      "author": [],
+      "contents": "\r\n\r\n\r\n\r\n",
+      "last_modified": "2022-05-19T14:36:15+10:00"
+    },
+    {
+      "path": "rationale.html",
+      "title": "Rationale",
+      "description": "Project rationale, goals, and target scenarios.\n",
+      "author": [
+        {
+          "name": "Taren Sanders",
+          "url": "https://github.com/tarensanders"
+        }
+      ],
+      "date": "`r Sys.Date()`",
+      "contents": "\r\nDistill is a publication format for scientific and technical writing,\r\nnative to the web.\r\nLearn more about using Distill for R Markdown at https://rstudio.github.io/distill.\r\n\r\n\r\n\r\n",
+      "last_modified": "2022-05-19T14:36:16+10:00"
+    },
+    {
+      "path": "sketches.html",
+      "title": "Sketches",
+      "description": "Project rationale, goals, and target scenarios.\n",
+      "author": [
+        {
+          "name": "Taren Sanders",
+          "url": "https://github.com/tarensanders"
+        }
+      ],
+      "date": "`r Sys.Date()`",
+      "contents": "\r\nDistill is a publication format for scientific and technical writing,\r\nnative to the web.\r\nLearn more about using Distill for R Markdown at https://rstudio.github.io/distill.\r\n\r\n\r\n\r\n",
+      "last_modified": "2022-05-19T14:36:16+10:00"
+    }
+  ],
+  "collections": []
+}
