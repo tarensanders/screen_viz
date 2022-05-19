@@ -1,15 +1,51 @@
 ---
-title: "screenviz"
+title: "Screen Time Vizualization Development"
 description: |
-  Welcome to the website. I hope you enjoy it!
+  Project logs and notes for the development of the Screen Time Vizualization.
 site: distill::distill_website
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-
-# Learn more about creating websites with Distill at:
-# https://rstudio.github.io/distill/website.html
-
 ```
+
+# Welcome 👋
+
+The purpose of this site is to host all of the files and notes related to the development of the Screen Time Vizualization.
+
+## Providing Feedback
+
+Providing feedback on interactive documents is tricky.
+At the bottom of each page is a [giscus](https://giscus.app/) comment box.
+Comments made here are sent to the [discussions](https://github.com/tarensanders/screen_viz/discussions/categories/comments) page on GitHub.
+In order to add comments, you will need to sign in to GitHub and authorise the [giscus app](https://github.com/marketplace/giscus) to [make comments on your behalf](https://docs.github.com/en/developers/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps) (don't worry, this is safe).
+Here is my proposed workflow:
+
+* For each piece of feedback or idea, create a new comment.
+* You can reply to someone else's (or your own) comment to keep ideas together, or upvote it if you think it is a good idea.
+* You'll recieve notifications from GitHub (à la Google Docs) when someone responds to your comment.
+You can always turn these off.
+* To action feedback, I'll create a GitHub issue linked to the comment, and respond to the comment when that issue is resolved.
+
+## Links 🔗
+
+### [Project Rationale](rationale.html)
+
+Contains the rationale for the project and the objectives.
+
+### [Project Sketches](sketches.html)
+
+These are the early mockups of the design.
+The focus is mostly on what idiom best displays the information, rather than on the actual style and design.
+That is: "is this information clearer as a bar chart or heatmap?", rather than "does this look good?".
+
+### [Draft App](draftapp.html)
+
+When an idiom design is finalised, I'll translate it into a page in a shiny app.
+The early builds are meant to be quick, so expect default styling and clunky interactions.
+These get resolved once all of the screens are built.
+
+### [Repository](https://github.com/tarensanders/screen_viz)
+
+All of the code, website pages, feedback, and issues are hosted on GitHub.
 
