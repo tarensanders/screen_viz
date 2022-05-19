@@ -16,11 +16,173 @@ output: distill::distill_article
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-Distill is a publication format for scientific and technical writing, native to the web. 
+```{r load-data}
+library(screenviz)
+library(tidyverse)
 
-Learn more about using Distill for R Markdown at <https://rstudio.github.io/distill>.
+df <- screenviz::load_data()
+```
+
+# Scenarios
+
+There are two groups of users we think might want to access the system. Example use cases are given below.
+
+## Scenario One
+
+**Users:** Parents
+
+> A parent wants to explore the types of exposure.
+> The select a particular exposure (e.g., TV) might impact their child.
+> They search for the exposure and are given an overview of the known outcome categories.
+> Visualise info about the uncertainty for each effect.
+> They filter the results for their child's age.
+> They click into an outcome category to get more information on the result (e.g., text summary, info about reason for the uncertainty).
+
+# Scenario Two
+
+**Users:** Researchers/clinicians
+
+> A domain expert wants to explore evidence for screen time in more detail.
+> Use the system to get an overview of the evidence (exposure, outcome, effect size).
+> They search for the exposure and/or the outcome, and optionally filter by age.
+> They click into a relationship and can access the forest plot of the original studies, and the link to the original meta-analysis (and other, related studies, uncertainty). Three levels: evidence, uncertainty, meta-data.
+
+# Tasks/Screens
+
+## Task One
+
+> Explore the exposures that there are evidence for.
+
+**Proposed Idiom:** Heatmap
+
+### Counts
+
+```{r hm-counts}
+df %>%
+  group_by(general_exposure, general_outcome) %>%
+  summarise(n = n()) %>%
+  ggplot(aes(x = general_exposure, y = general_outcome, fill = n)) +
+  geom_tile() +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+```
+
+### Effect sizes
+
+```{r hm-es}
+df %>%
+  group_by(general_exposure, general_outcome) %>%
+  summarise(r = mean(r)) %>%
+  ggplot(aes(x = general_exposure, y = general_outcome, fill = r)) +
+  geom_tile() +
+  scale_fill_distiller(palette = "RdBu", limits = c(-.5, .5)) +
+  theme_minimal()
+```
+
+### Notes
+
+* Could show these side-by-side
+* Could further reduce the number of categories (e.g., to just "Health", "Education", etc)
+* At the moment the effect size is just taking the mean, but I think it would be more sensible to rerun the meta-analysis
+* The proposed interaction (to move to more detailed screen) would be to click one of:
+  - Exposure(y - axis label)
+  - Outcome(x - axis label)
+  - Effect size (cell of heatmap)
+
+## Task Two
+
+> Explore an overview of the outcome categories for the selected exposure category.
+
+(*E.g., if they have chosen 'video games'*)
+
+### Option One (Heatmap)
+
+```{r}
+df %>%
+  filter(general_exposure == "Video games") %>%
+  group_by(plain_language_exposure, plain_language_outcome) %>%
+  summarise(r = mean(r)) %>%
+  ggplot(aes(
+    x = plain_language_exposure,
+    y = plain_language_outcome, fill = r
+  )) +
+  geom_tile() +
+  scale_fill_distiller(palette = "RdBu", limits = c(-.5, .5)) +
+  theme_minimal()
+```
+
+### Option  Two (Line Range)
+
+```{r}
+p_df <- df %>%
+  filter(general_exposure == "Video games") %>%
+  select(
+    general_exposure, general_outcome, plain_language_exposure,
+    plain_language_outcome, r, r_ub, r_lb, age_group, n
+  ) %>%
+  mutate(plain_language_outcome = fct_reorder(plain_language_outcome, r)) %>%
+  arrange(plain_language_outcome, r) %>%
+  group_by(general_exposure, plain_language_outcome) %>%
+  mutate(
+    effect_id = row_number(),
+    group_id = cur_group_id(),
+    median_effect = median(r)
+  ) %>%
+  ungroup() %>%
+  arrange(desc(median_effect), plain_language_outcome, desc(r)) %>%
+  mutate(
+    aux = row_number()
+  ) %>%
+  group_by(plain_language_outcome) %>%
+  mutate(breaks = median(aux)) %>%
+  ungroup() %>%
+  mutate(
+    stripe = factor(if_else(group_id %% 2 == 0, 1, 0))
+  )
+
+ggplot(p_df, aes(
+  x = aux,
+  y = r
+)) +
+  geom_linerange(aes(
+    ymin = r_lb,
+    ymax = r_ub,
+    col = age_group
+  ), size = 3) +
+  geom_point(aes(
+    size = log(n)
+  ),
+  shape = 21,
+  color = "white", stroke = 0.5, fill = "black"
+  ) +
+  geom_rect(
+    aes(
+      xmax = aux + 0.5, xmin = aux - 0.5,
+      ymin = -1, ymax = 1, fill = stripe
+    ),
+    alpha = 0.4
+  ) +
+  scale_y_continuous(name = "Correlation", limits = c(-1, 1)) +
+  scale_x_continuous("Outcome",
+    labels = unique(p_df$plain_language_outcome),
+    breaks = unique(p_df$breaks)
+  ) +
+  scale_fill_manual(values = c("white", "grey50"), guide = "none") +
+  scale_size(guide = "none") +
+  coord_flip() +
+  theme_minimal()
+```
+
+### Notes
+
+* I think the heatmap is likely to be more intuitive 
+* We could instead put the line range in the tooltip or in the next screen
+* The proposed interaction would be hover and click in for details
+* Study quality could also be in the tooltip
 
 
+## Task Three
 
+> Show detailed information about the effect
 
-
+*TODO* - I think this will likely be a formatted page with an interpretation, plus original forest plot and links to studies for 'expert' users.
