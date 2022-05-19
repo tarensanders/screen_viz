@@ -6,7 +6,7 @@
       "description": "Expect lots of changes here.\n",
       "author": [],
       "contents": "\n\n\n\n\n\n",
-      "last_modified": "2022-05-19T18:59:45+10:00"
+      "last_modified": "2022-05-19T19:37:35+10:00"
     },
     {
       "path": "index.html",
@@ -14,7 +14,7 @@
       "description": "Project logs and notes for the development of the Screen Time Vizualization.\n",
       "author": [],
       "contents": "\nWelcome 👋\nThe purpose of this site is to host all of the files and notes related to the development of the Screen Time Vizualization.\nProviding Feedback\nProviding feedback on interactive documents is tricky. At the bottom of each page is a giscus comment box. Comments made here are sent to the discussions page on GitHub. In order to add comments, you will need to sign in to GitHub and authorise the giscus app to make comments on your behalf (don’t worry, this is safe). Here is my proposed workflow:\nFor each piece of feedback or idea, create a new comment.\nYou can reply to someone else’s (or your own) comment to keep ideas together, or upvote it if you think it is a good idea.\nYou’ll recieve notifications from GitHub (à la Google Docs) when someone responds to your comment. You can always turn these off.\nTo action feedback, I’ll create a GitHub issue linked to the comment, and respond to the comment when that issue is resolved.\nLinks 🔗\nProject Rationale\nContains the rationale for the project and the objectives.\nProject Sketches\nThese are the early mockups of the design. The focus is mostly on what idiom best displays the information, rather than on the actual style and design. That is: “is this information clearer as a bar chart or heatmap?”, rather than “does this look good?”.\nDraft App\nWhen an idiom design is finalised, I’ll translate it into a page in a shiny app. The early builds are meant to be quick, so expect default styling and clunky interactions. These get resolved once all of the screens are built.\nRepository\nAll of the code, website pages, feedback, and issues are hosted on GitHub.\n\n\n\n",
-      "last_modified": "2022-05-19T18:59:46+10:00"
+      "last_modified": "2022-05-19T19:37:35+10:00"
     }
   ],
   "collections": ["articles/articles.json"]
