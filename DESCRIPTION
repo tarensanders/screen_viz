@@ -20,5 +20,6 @@ Imports:
     shiny,
     stringr
 Suggests: 
+    distill,
     rmarkdown,
     rsconnect
