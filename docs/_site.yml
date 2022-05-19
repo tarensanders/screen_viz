@@ -13,9 +13,9 @@ navbar:
     - text: "Development"
       menu:
         - text: "Rationale"
-          href: rationale.html
+          href: articles/rationale/index.html
         - text: "Sketches"
-          href: sketches.html
+          href: articles/sketches/index.html
         - text: "---"
         - text: "Draft App"
           href: draftapp.html
