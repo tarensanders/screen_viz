@@ -8,7 +8,13 @@
 #' @export
 #' @return The tidy dataset
 load_data <- function() {
-  df <- readr::read_csv("https://raw.githubusercontent.com/Motivation-and-Behaviour/screen_umbrella/main/supplementary_files/Supplementary%20File%202%20-%20Complete%20Effects%20Data.csv") # nolint
+  stopifnot(Sys.getenv("CLOUD_USER") != "", Sys.getenv("CLOUD_PASS") != "")
+
+  df <- cloudstoR::cloud_get(
+    "Shared/screenviz/effectsizedata.csv",
+    user = Sys.getenv("CLOUD_USER"),
+    password = Sys.getenv("CLOUD_PASS")
+  )
 
   df %>%
     dplyr::mutate(

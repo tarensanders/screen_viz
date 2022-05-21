@@ -13,6 +13,8 @@ jobs:
       GITHUB_PAT:       ${{ secrets.GITHUB_TOKEN }}
       RSCONNECT_TOKEN:  ${{ secrets.RSCONNECT_TOKEN }}
       RSCONNECT_SECRET: ${{ secrets.RSCONNECT_SECRET }}
+      CLOUD_USER:       ${{ secrets.CLOUD_USER }}
+      CLOUD_PASS:       ${{ secrets.CLOUD_PASS }}
     steps:
       - uses: actions/checkout@v2
 
@@ -22,16 +24,18 @@ jobs:
         with:
           use-public-rspm: true
 
-      # - uses: r-lib/actions/setup-renv@v2
-
       - uses: r-lib/actions/setup-r-dependencies@v2
         with: 
           extra-packages: any::rsconnect 
           needs: check 
 
-      # - name: Install rsconnect
-      #   run: install.packages("rsconnect")
-      #   shell: Rscript {0}
+      - name: Create environment file
+        run: |
+          touch .Renviron
+          echo CLOUD_USER=${{ secrets.CLOUD_USER }} >> .Renviron
+          echo CLOUD_PASS=${{ secrets.CLOUD_PASS }} >> .Renviron
+          cat .Renviron
+
 
       - name: Authorize and deploy app
         run: |
