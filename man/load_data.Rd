@@ -2,13 +2,16 @@
 % Please edit documentation in R/load_data.R
 \name{load_data}
 \alias{load_data}
-\title{Load and Tidy Data}
+\title{Load Data From CloudStor}
 \usage{
-load_data()
+load_data(path)
+}
+\arguments{
+\item{path}{The location of the dataset on CloudStor}
 }
 \value{
-The tidy dataset
+The loaded dataset
 }
 \description{
-Load the dataset and convert to tidy format.
+Load the dataset from CloudStor
 }
