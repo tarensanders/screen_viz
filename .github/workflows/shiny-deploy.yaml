@@ -26,7 +26,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with: 
-          extra-packages: any::rsconnect
+          extra-packages: any::rcmdcheck, any::XML
           needs: check 
 
       - name: Create environment file
