@@ -15,8 +15,6 @@ Imports:
     forcats,
     ggplot2,
     magrittr,
-    pkgload,
-    readr,
     rlang,
     shiny,
     stringr
