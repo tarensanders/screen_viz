@@ -89,6 +89,9 @@ tidy_data_studies <- function(df) {
 
 #' @rdname tidy_data
 tidy_data_rob <- function(df) {
-  # TODO: add code here
+  df <-
+    df %>%
+    dplyr::filter(.data$reviewer == "Consensus") %>%
+    dplyr::select(-dplyr::starts_with("x"), -.data$study_id, -.data$reviewer)
   return(df)
 }
