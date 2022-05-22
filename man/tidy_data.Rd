@@ -5,6 +5,7 @@
 \alias{tidy_data_effects}
 \alias{tidy_data_studies}
 \alias{tidy_data_rob}
+\alias{tidy_data_refs}
 \title{Tidy Data}
 \usage{
 tidy_data_effects(df)
@@ -12,6 +13,8 @@ tidy_data_effects(df)
 tidy_data_studies(df)
 
 tidy_data_rob(df)
+
+tidy_data_refs(df)
 }
 \arguments{
 \item{df}{The dataset to tidy.}

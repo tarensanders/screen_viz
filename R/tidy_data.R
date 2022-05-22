@@ -95,3 +95,9 @@ tidy_data_rob <- function(df) {
     dplyr::select(-dplyr::starts_with("x"), -.data$study_id, -.data$reviewer)
   return(df)
 }
+
+#' @rdname tidy_data
+tidy_data_refs <- function(df) {
+  # TODO: Decide what of this data needs to stay
+  return(df)
+}
