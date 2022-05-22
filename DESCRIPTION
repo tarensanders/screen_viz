@@ -12,11 +12,13 @@ RoxygenNote: 7.2.0
 Imports: 
     cloudstoR,
     dplyr,
+    echarts4r,
     forcats,
     ggplot2,
     magrittr,
     rlang,
     shiny,
+    shinyalert,
     stringr
 Suggests: 
     distill,
