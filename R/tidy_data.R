@@ -2,6 +2,8 @@
 #'
 #' Tidies the dataset for visualisation.
 #'
+#' @importFrom rlang .data
+#'
 #' @param df The dataset to tidy.
 #'
 #' @return A tidy dataset
@@ -79,7 +81,15 @@ tidy_data_reviews <- function(df) {
 
 #' @rdname tidy_data
 tidy_data_studies <- function(df) {
-  # TODO: add code here
+  df <-
+    df %>%
+    dplyr::select(
+      c(
+        "effect_size_id", "covidence_review_id", "within_effect_id",
+        "study_author", "study_year", "study_name", "study_n"
+      ),
+      dplyr::starts_with("r_")
+    )
   return(df)
 }
 
