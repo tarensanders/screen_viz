@@ -3,14 +3,11 @@
 \name{tidy_data}
 \alias{tidy_data}
 \alias{tidy_data_effects}
-\alias{tidy_data_reviews}
 \alias{tidy_data_studies}
 \alias{tidy_data_rob}
 \title{Tidy Data}
 \usage{
 tidy_data_effects(df)
-
-tidy_data_reviews(df)
 
 tidy_data_studies(df)
 

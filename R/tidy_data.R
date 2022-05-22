@@ -74,12 +74,6 @@ tidy_data_effects <- function(df) {
 }
 
 #' @rdname tidy_data
-tidy_data_reviews <- function(df) {
-  # TODO: add code here
-  return(df)
-}
-
-#' @rdname tidy_data
 tidy_data_studies <- function(df) {
   df <-
     df %>%
