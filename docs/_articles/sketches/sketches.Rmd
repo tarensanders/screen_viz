@@ -118,7 +118,7 @@ p_df <- df %>%
   filter(general_exposure == "Video games") %>%
   select(
     general_exposure, general_outcome, plain_language_exposure,
-    plain_language_outcome, r, r_ub, r_lb, age_group, n
+    plain_language_outcome, r, ciub95, cilb95, age_group, n
   ) %>%
   mutate(plain_language_outcome = fct_reorder(plain_language_outcome, r)) %>%
   arrange(plain_language_outcome, r) %>%
@@ -145,8 +145,8 @@ ggplot(p_df, aes(
   y = r
 )) +
   geom_linerange(aes(
-    ymin = r_lb,
-    ymax = r_ub,
+    ymin = cilb95,
+    ymax = ciub95,
     col = age_group
   ), size = 3) +
   geom_point(aes(
