@@ -19,6 +19,7 @@ Imports:
     rlang,
     shiny,
     shinyalert,
+    stats,
     stringr
 Suggests: 
     distill,

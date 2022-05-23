@@ -10,6 +10,8 @@
 #' In addition, the function returns two additional dataframes that contain the
 #' different levels for outcomes and exposures.
 #'
+#' @importFrom rlang .data
+#'
 #' @param n_studies number of studies to simulate.
 #'
 #' @return A list with the created dataset, and the exposure/outcome keys.
@@ -21,20 +23,20 @@ make_dummy_data <- function(n_studies) {
 
   df_cats <- df_effects %>%
     dplyr::transmute(
-      outcome_category = outcome_category,
-      outcome_group = general_outcome,
-      outcome_specific = plain_language_outcome,
-      exposure_group = general_exposure,
-      exposure_specific = plain_language_exposure
+      outcome_category = .data$outcome_category,
+      outcome_group = .data$general_outcome,
+      outcome_specific = .data$plain_language_outcome,
+      exposure_group = .data$general_exposure,
+      exposure_specific = .data$plain_language_exposure
     ) %>%
     dplyr::distinct()
 
   exposures_key <- df_cats %>%
-    dplyr::select(starts_with("exposure")) %>%
+    dplyr::select(dplyr::starts_with("exposure")) %>%
     dplyr::distinct()
 
   outcomes_key <- df_cats %>%
-    dplyr::select(starts_with("outcome")) %>%
+    dplyr::select(dplyr::starts_with("outcome")) %>%
     dplyr::distinct()
 
   # Create the dummy studies dataset
@@ -42,8 +44,8 @@ make_dummy_data <- function(n_studies) {
     dplyr::sample_n(df_cats, n_studies, replace = TRUE) %>%
     dplyr::mutate(
       study_id = dplyr::row_number(),
-      r = runif(nrow(.), min = -0.5, max = 0.8),
-      n = abs(floor(rnorm(nrow(.), mean = 100, sd = 50)))
+      r = stats::runif(nrow(.), min = -0.5, max = 0.8),
+      n = abs(floor(stats::rnorm(nrow(.), mean = 100, sd = 50)))
     )
 
   outcome_types <- c("outcome_category", "outcome_group", "outcome_specific")
@@ -68,8 +70,12 @@ make_dummy_data <- function(n_studies) {
         df_studies %>%
         dplyr::group_by(.data[[outcome]], .data[[exposure]]) %>%
         dplyr::summarise(
-          r = mean(r), n = sum(n), k = dplyr::n(), i_2 = runif(1),
-          outcome_type = outcome, exposure_type = exposure
+          r = mean(.data$r),
+          n = sum(.data$n),
+          k = dplyr::n(),
+          i_2 = stats::runif(1),
+          outcome_type = outcome,
+          exposure_type = exposure
         ) %>%
         dplyr::ungroup() %>%
         dplyr::rename(
