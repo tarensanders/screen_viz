@@ -2,125 +2,188 @@ mod_heatmap_ui <- function(id) {
   shiny::fluidPage(
     shiny::titlePanel("Heatmap"),
     echarts4r::echarts4rOutput(shiny::NS(id, "heatmap"), height = "40vh"),
+    shiny::tags$b("Interaction:"),
     shiny::textOutput(shiny::NS(id, "clicked_data")),
-    shiny::textOutput(shiny::NS(id, "clicked_data_value")),
-    shiny::textOutput(shiny::NS(id, "clicked_row")),
     shiny::textOutput(shiny::NS(id, "xaxis_clicked")),
     shiny::textOutput(shiny::NS(id, "yaxis_clicked")),
+    shiny::tags$br(),
+    shiny::tags$b("Exposure:"),
+    shiny::textOutput(shiny::NS(id, "curr_exposure")),
+    shiny::textOutput(shiny::NS(id, "clicked_exp")),
+    shiny::textOutput(shiny::NS(id, "exp_level")),
+    shiny::tags$br(),
+    shiny::tags$b("Outcome:"),
+    shiny::textOutput(shiny::NS(id, "curr_outcome")),
+    shiny::textOutput(shiny::NS(id, "clicked_out")),
+    shiny::textOutput(shiny::NS(id, "out_level")),
   )
 }
 
-mod_heatmap_server <- function(id, dataset) {
+mod_heatmap_server <- function(id, data) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
-      output$heatmap <-
-        echarts4r::renderEcharts4r({
-          dataset() %>%
-            dplyr::mutate(
-              general_exposure = forcats::as_factor(.data$general_exposure),
-              general_outcome = forcats::as_factor(.data$general_outcome)
-            ) %>%
-            dplyr::group_by(
-              .data$general_exposure, .data$general_outcome,
-              .drop = FALSE
-            ) %>%
-            dplyr::summarise(r = mean(.data$r)) %>%
-            dplyr::ungroup() %>%
-            echarts4r::e_chart(.data$general_exposure) %>%
-            echarts4r::e_heatmap(.data$general_outcome, .data$r,
-              itemStyle = list(emphasis = list(shadowBlur = 10))
-            ) %>%
-            echarts4r::e_visual_map(
-              min = -0.8, max = 0.8, precision = 2,
-              inRange = list(color = c("#0ee732", "#ffffff", "#990000"))
-            ) %>%
-            echarts4r::e_x_axis(
-              axisLabel = list(
-                interval = 0,
-                rotate = 30
-              ),
-              triggerEvent = TRUE
-            ) %>%
-            echarts4r::e_y_axis(triggerEvent = TRUE) %>%
-            echarts4r::e_grid(bottom = "20%") %>%
-            echarts4r::e_on(
-              "xAxis.category",
-              "function(params){
-               Shiny.setInputValue('heatmap_app-xaxis_clicked',
-                                    params.value, {priority: 'event'});
-               console.log(params.value);
-              }"
-            ) %>%
-            echarts4r::e_on(
-              "yAxis.category",
-              "function(params){
-               Shiny.setInputValue('heatmap_app-yaxis_clicked',
-                                    params.value, {priority: 'event'});
-               console.log(params.value);
-              }"
-            )
-        })
+      dataset <- shiny::reactive({
+        data$data
+      })
+      exposures_key <- shiny::reactive({
+        data$exp_key
+      })
+
+      outcomes_key <- shiny::reactive({
+        data$out_key
+      })
+
+      outcome_types <- c(
+        "outcome_category",
+        "outcome_group", "outcome_specific"
+      )
+      exposure_types <- c(
+        "exposure_group",
+        "exposure_specific"
+      )
+
+      # Instantiate variables
+      clicked <- shiny::reactiveValues(exp = NULL, out = NULL)
+      exp_level <- shiny::reactiveValues(current = 1, updated = 1)
+      out_level <- shiny::reactiveValues(current = 1, updated = 1)
+
+      # Set observation logic
+      shiny::observeEvent(input$xaxis_clicked, {
+        # TODO: this should be a function
+        # update the clicked variable
+        clicked$exp <- input$xaxis_clicked
+        # Update the level variable
+        exp_level$current <- exp_level$updated
+        exp_level$updated <- update_level(
+          exposure_types, exp_level$current, clicked$exp
+        )
+      })
+
+      shiny::observeEvent(input$yaxis_clicked, {
+        # TODO: this should be a function
+        # update the clicked variable
+        clicked$out <- input$yaxis_clicked
+        # Update the level variable
+        out_level$current <- out_level$updated
+        out_level$updated <- update_level(
+          outcome_types, out_level$current, clicked$out
+        )
+      })
+
+      shiny::observeEvent(input$heatmap_clicked_data, {
+        # TODO: this should be a function
+        if (is.null(clicked$exp)) {
+          clicked$exp <- input$heatmap_clicked_data$value[1]
+          exp_level$current <- exp_level$updated
+          exp_level$updated <- update_level(
+            exposure_types, exp_level$current, clicked$exp
+          )
+        }
+
+        if (is.null(clicked$out)) {
+          clicked$out <- input$heatmap_clicked_data$value[2]
+          out_level$current <- out_level$updated
+          out_level$updated <- update_level(
+            outcome_types, out_level$current, clicked$out
+          )
+        }
+
+        if (clicked$exp != input$heatmap_clicked_data$value[1]) {
+          clicked$exp <- input$heatmap_clicked_data$value[1]
+          exp_level$current <- exp_level$updated
+          exp_level$updated <- update_level(
+            exposure_types, exp_level$current, clicked$exp
+          )
+        }
+        if (clicked$out != input$heatmap_clicked_data$value[2]) {
+          clicked$out <- input$heatmap_clicked_data$value[2]
+          out_level$current <- out_level$updated
+          out_level$updated <- update_level(
+            outcome_types, out_level$current, clicked$out
+          )
+        }
+      })
+
+      curr_outcome <- shiny::reactive({
+        update_curr(
+          outcomes_key(), outcome_types, out_level$current, clicked$out,
+          out_level$updated
+        )
+      })
+      curr_exposure <- shiny::reactive({
+        update_curr(
+          exposures_key(), exposure_types, exp_level$current, clicked$exp,
+          exp_level$updated
+        )
+      })
+
+      plot_data <- shiny::reactive({
+        dataset() %>%
+          dplyr::filter(.data$outcome %in% curr_outcome() &
+            .data$exposure %in% curr_exposure())
+      })
+
+      output$heatmap <- echarts_heatmap(
+        plot_data(),
+        curr_outcome(), curr_exposure()
+      )
+
+      output$curr_outcome <- shiny::renderText(paste(
+        "curr_outcome:",
+        paste(curr_outcome(), collapse = ", ")
+      ))
+
+      output$curr_exposure <- shiny::renderText(paste(
+        "curr_exposure:",
+        paste(curr_exposure(), collapse = ", ")
+      ))
 
       output$clicked_data <- shiny::renderText(paste(
         "clicked_data:",
         input$heatmap_clicked_data
-      ))
-      output$clicked_data_value <- shiny::renderText(paste(
-        "clicked_data_value:",
-        input$heatmap_clicked_data_value
-      ))
-      output$clicked_row <- shiny::renderText(paste(
-        "clicked_row:",
-        input$heatmap_clicked_row
       ))
       output$xaxis_clicked <- shiny::renderText(paste(
         "xaxis_clicked:",
         input$xaxis_clicked
       ))
       output$yaxis_clicked <- shiny::renderText(paste(
-        "xaxis_clicked:",
+        "yaxis_clicked:",
         input$yaxis_clicked
       ))
 
+      output$clicked_exp <- shiny::renderText(paste(
+        "clicked_exp:",
+        clicked$exp
+      ))
+      output$clicked_out <- shiny::renderText(paste(
+        "clicked_out:",
+        clicked$out
+      ))
 
-      # TODO: Implement these sections
-      not_implemented_err <- function(clicked) {
-        shinyalert::shinyalert(
-          title = "Not Implemented",
-          text = paste(
-            "You clicked on <b>", clicked, "</b>.<br>",
-            "In the future this will take you to the exposures/outcomes you",
-            "selected, but this is not yet implemented."
-          ),
-          html = TRUE, type = "error"
-        )
-      }
-
-      shiny::observeEvent(
-        input$xaxis_clicked,
-        not_implemented_err(input$xaxis_clicked)
-      )
-      shiny::observeEvent(
-        input$yaxis_clicked,
-        not_implemented_err(input$yaxis_clicked)
-      )
+      output$exp_level <- shiny::renderText(paste(
+        "exp_level:",
+        "current:", exp_level$current,
+        "updated:", exp_level$updated
+      ))
+      output$out_level <- shiny::renderText(paste(
+        "out_level:",
+        "current:", out_level$current,
+        "updated:", out_level$updated
+      ))
     }
   )
 }
 
 mod_heatmap_app <- function() {
-  df_effects <- load_data("Shared/screenviz/combined_effects.rds")
-  df_effects <- tidy_data_effects(df_effects)
+  data <- make_dummy_data(2000)
 
   ui <- mod_heatmap_ui("heatmap_app")
 
   server <- function(input, output, session) {
     mod_heatmap_server(
       "heatmap_app",
-      shiny::reactive({
-        df_effects
-      })
+      data
     )
   }
   shiny::shinyApp(ui, server)
