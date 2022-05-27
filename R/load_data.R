@@ -20,6 +20,8 @@ load_data <- function(path, use_cache = TRUE) {
 
   dest <- ifelse(use_cache, cache_path, NULL)
 
+  if (use_cache) dir.create("data/", showWarnings = FALSE)
+
   df_path <- cloudstoR::cloud_get(
     path,
     dest = dest,
@@ -30,3 +32,6 @@ load_data <- function(path, use_cache = TRUE) {
 
   return(readRDS(df_path))
 }
+
+user <- Sys.getenv("CLOUD_USER")
+pass <- Sys.getenv("CLOUD_PASS")
