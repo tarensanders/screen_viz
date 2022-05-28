@@ -48,8 +48,8 @@ update_curr <- function(key, types, level, clicked, clicked_level) {
   }
   out <-
     key %>%
-    dplyr::filter(.data[[types[[clicked_level]]]] == clicked) %>%
-    dplyr::distinct(.data[[types[[level]]]]) %>%
+    dplyr::filter(.data[[types[[level]]]] == clicked) %>%
+    dplyr::distinct(.data[[types[[clicked_level]]]]) %>%
     dplyr::pull()
   return(out)
 }

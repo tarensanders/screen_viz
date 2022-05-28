@@ -2,6 +2,7 @@ mod_heatmap_ui <- function(id) {
   shiny::fluidPage(
     shiny::titlePanel("Heatmap"),
     echarts4r::echarts4rOutput(shiny::NS(id, "heatmap"), height = "40vh"),
+    shiny::actionButton(NS(id, "reset"), "Reset"),
     shiny::tags$b("Interaction:"),
     shiny::textOutput(shiny::NS(id, "clicked_data")),
     shiny::textOutput(shiny::NS(id, "xaxis_clicked")),
@@ -18,63 +19,6 @@ mod_heatmap_ui <- function(id) {
     shiny::textOutput(shiny::NS(id, "out_level")),
     shiny::tags$b("Data:"),
     shiny::dataTableOutput(shiny::NS(id, "data"))
-  )
-}
-
-mod_heatmap_server <- function(id, data) {
-  shiny::moduleServer(
-    id,
-    function(input, output, session) {
-      # These objects are fixed
-      dataset <- data$data
-      exposures_key <- data$exp_key
-      outcomes_key <- data$out_key
-      outcome_types <- names(outcomes_key)
-      exposure_types <- names(exposures_key)
-
-      # Instantiate variables
-      clicked <- shiny::reactiveValues(exp = NULL, out = NULL)
-      exp_level <- shiny::reactiveValues(current = 1, updated = 1)
-      out_level <- shiny::reactiveValues(current = 1, updated = 1)
-      curr_exposure <- shiny::reactive(update_curr(
-        exposures_key, exposure_types, exp_level$current, clicked$exp,
-        exp_level$updated
-      ))
-      curr_outcome <- shiny::reactive(update_curr(
-        outcomes_key, outcome_types, out_level$current, clicked$out,
-        out_level$updated
-      ))
-
-      output$curr_outcome <- shiny::renderText(paste(
-        "curr_outcome:",
-        paste(curr_outcome(), collapse = ", ")
-      ))
-
-      output$curr_exposure <- shiny::renderText(paste(
-        "curr_exposure:",
-        paste(curr_exposure(), collapse = ", ")
-      ))
-
-      output$clicked_exp <- shiny::renderText(paste(
-        "clicked_exp:",
-        clicked$exp
-      ))
-      output$clicked_out <- shiny::renderText(paste(
-        "clicked_out:",
-        clicked$out
-      ))
-
-      output$exp_level <- shiny::renderText(paste(
-        "exp_level:",
-        "current:", exp_level$current,
-        "updated:", exp_level$updated
-      ))
-      output$out_level <- shiny::renderText(paste(
-        "out_level:",
-        "current:", out_level$current,
-        "updated:", out_level$updated
-      ))
-    }
   )
 }
 
@@ -204,10 +148,10 @@ mod_heatmap_server_old <- function(id, data) {
 
       output$data <- shiny::renderDataTable(plot_data())
 
-      output$heatmap <- echarts_heatmap(
+      output$heatmap <- echarts4r::renderEcharts4r(echarts_heatmap(
         plot_data(),
         curr_outcome(), curr_exposure()
-      )
+      ))
 
       output$curr_outcome <- shiny::renderText(paste(
         "curr_outcome:",
@@ -261,7 +205,7 @@ mod_heatmap_app <- function() {
   ui <- mod_heatmap_ui("heatmap_app")
 
   server <- function(input, output, session) {
-    mod_heatmap_server(
+    mod_heatmap_server_old(
       "heatmap_app",
       data
     )

@@ -25,13 +25,13 @@ test_that("update_curr works with/without click_level provided", {
 })
 
 test_that("update_curr works for different levels", {
-  expect_equal(update_curr_test(2, "a", 1), c("d"))
-  expect_equal(update_curr_test(2, "b", 1), c("e")) # remove duplicates
-  expect_equal(update_curr_test(2, "c", 1), c("f", "g")) # return all unique
+  expect_equal(update_curr_test(1, "a", 2), c("d"))
+  expect_equal(update_curr_test(1, "b", 2), c("e")) # remove duplicates
+  expect_equal(update_curr_test(1, "c", 2), c("f", "g")) # return all unique
 
-  expect_equal(update_curr_test(3, "d", 2), c("h"))
-  expect_equal(update_curr_test(3, "e", 2), c("i", "j")) # return all unique
-  expect_equal(update_curr_test(3, "g", 2), c("j")) # remove duplicates
+  expect_equal(update_curr_test(2, "d", 3), c("h"))
+  expect_equal(update_curr_test(2, "e", 3), c("i", "j")) # return all unique
+  expect_equal(update_curr_test(2, "g", 3), c("j")) # remove duplicates
 })
 
 test_that("update_curr click at same level returns itself", {
