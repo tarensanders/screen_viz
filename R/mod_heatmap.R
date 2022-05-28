@@ -22,7 +22,7 @@ mod_heatmap_ui <- function(id) {
   )
 }
 
-mod_heatmap_server_old <- function(id, data) {
+mod_heatmap_server <- function(id, data) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
@@ -127,19 +127,6 @@ mod_heatmap_server_old <- function(id, data) {
         }
       })
 
-      # curr_outcome <- shiny::reactive({
-      #   update_curr(
-      #     outcomes_key, outcome_types, out_level$current, clicked$out,
-      #     out_level$updated
-      #   )
-      # })
-      # curr_exposure <- shiny::reactive({
-      #   update_curr(
-      #     exposures_key, exposure_types, exp_level$current, clicked$exp,
-      #     exp_level$updated
-      #   )
-      # })
-
       plot_data <- shiny::reactive({
         dataset %>%
           dplyr::filter(.data$outcome %in% curr_outcome() &
@@ -153,6 +140,25 @@ mod_heatmap_server_old <- function(id, data) {
         curr_outcome(), curr_exposure()
       ))
 
+      shiny::observeEvent(input$reset, {
+        clicked$exp <- NULL
+        clicked$out <- NULL
+        exp_level$current <- 1
+        exp_level$updated <- 1
+        out_level$current <- 1
+        out_level$updated <- 1
+        curr_exposure <- update_curr(
+          exposures_key, exposure_types, exp_level$current, clicked$exp,
+          exp_level$updated
+        )
+        curr_outcome <- update_curr(
+          outcomes_key, outcome_types, out_level$current, clicked$out,
+          out_level$updated
+        )
+      })
+
+      # DEBUG ONLY
+      # TODO: remove all of this once working
       output$curr_outcome <- shiny::renderText(paste(
         "curr_outcome:",
         paste(curr_outcome(), collapse = ", ")
@@ -205,7 +211,7 @@ mod_heatmap_app <- function() {
   ui <- mod_heatmap_ui("heatmap_app")
 
   server <- function(input, output, session) {
-    mod_heatmap_server_old(
+    mod_heatmap_server(
       "heatmap_app",
       data
     )
