@@ -15,6 +15,7 @@ Imports:
     echarts4r,
     forcats,
     ggplot2,
+    glue,
     magrittr,
     rlang,
     shiny,

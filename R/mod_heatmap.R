@@ -1,28 +1,16 @@
 mod_heatmap_ui <- function(id) {
+  ns <- shiny::NS(id)
+
   shiny::fluidPage(
     shiny::titlePanel("Heatmap"),
-    echarts4r::echarts4rOutput(shiny::NS(id, "heatmap"), height = "40vh"),
-    shiny::actionButton(NS(id, "reset"), "Reset"),
-    shiny::tags$b("Interaction:"),
-    shiny::textOutput(shiny::NS(id, "clicked_data")),
-    shiny::textOutput(shiny::NS(id, "xaxis_clicked")),
-    shiny::textOutput(shiny::NS(id, "yaxis_clicked")),
+    echarts4r::echarts4rOutput(ns("heatmap"), height = "40vh"),
+    shiny::actionButton(ns("reset"), "Reset"),
     shiny::tags$br(),
-    shiny::tags$b("Exposure:"),
-    shiny::textOutput(shiny::NS(id, "curr_exposure")),
-    shiny::textOutput(shiny::NS(id, "clicked_exp")),
-    shiny::textOutput(shiny::NS(id, "exp_level")),
-    shiny::tags$br(),
-    shiny::tags$b("Outcome:"),
-    shiny::textOutput(shiny::NS(id, "curr_outcome")),
-    shiny::textOutput(shiny::NS(id, "clicked_out")),
-    shiny::textOutput(shiny::NS(id, "out_level")),
-    shiny::tags$b("Data:"),
-    shiny::dataTableOutput(shiny::NS(id, "data"))
+    shiny::tags$h2(shiny::htmlOutput(ns("hover_sentence")))
   )
 }
 
-mod_heatmap_server <- function(id, data) {
+mod_heatmap_server <- function(id, data, settings) {
   shiny::moduleServer(
     id,
     function(input, output, session) {
@@ -137,7 +125,7 @@ mod_heatmap_server <- function(id, data) {
 
       output$heatmap <- echarts4r::renderEcharts4r(echarts_heatmap(
         plot_data(),
-        curr_outcome(), curr_exposure()
+        curr_outcome(), curr_exposure(), settings
       ))
 
       shiny::observeEvent(input$reset, {
@@ -157,50 +145,14 @@ mod_heatmap_server <- function(id, data) {
         )
       })
 
-      # DEBUG ONLY
-      # TODO: remove all of this once working
-      output$curr_outcome <- shiny::renderText(paste(
-        "curr_outcome:",
-        paste(curr_outcome(), collapse = ", ")
-      ))
-
-      output$curr_exposure <- shiny::renderText(paste(
-        "curr_exposure:",
-        paste(curr_exposure(), collapse = ", ")
-      ))
-
-      output$clicked_data <- shiny::renderText(paste(
-        "clicked_data:",
-        input$heatmap_clicked_data
-      ))
-      output$xaxis_clicked <- shiny::renderText(paste(
-        "xaxis_clicked:",
-        input$xaxis_clicked
-      ))
-      output$yaxis_clicked <- shiny::renderText(paste(
-        "yaxis_clicked:",
-        input$yaxis_clicked
-      ))
-
-      output$clicked_exp <- shiny::renderText(paste(
-        "clicked_exp:",
-        clicked$exp
-      ))
-      output$clicked_out <- shiny::renderText(paste(
-        "clicked_out:",
-        clicked$out
-      ))
-
-      output$exp_level <- shiny::renderText(paste(
-        "exp_level:",
-        "current:", exp_level$current,
-        "updated:", exp_level$updated
-      ))
-      output$out_level <- shiny::renderText(paste(
-        "out_level:",
-        "current:", out_level$current,
-        "updated:", out_level$updated
-      ))
+      output$hover_sentence <- shiny::renderText(
+        shiny::HTML(parse_effect(
+          plot_data(),
+          input$heatmap_mouseover_data$value[1],
+          input$heatmap_mouseover_data$value[2],
+          settings
+        ))
+      )
     }
   )
 }
@@ -210,10 +162,13 @@ mod_heatmap_app <- function() {
 
   ui <- mod_heatmap_ui("heatmap_app")
 
+  settings <- get_settings()
+
   server <- function(input, output, session) {
     mod_heatmap_server(
       "heatmap_app",
-      data
+      data,
+      settings
     )
   }
   shiny::shinyApp(ui, server)

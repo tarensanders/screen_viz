@@ -1,4 +1,4 @@
-echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure) {
+echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
   echarts4r::e_charts_(plot_data, "exposure") %>%
     echarts4r::e_heatmap_("outcome", "r",
       itemStyle = list(emphasis = list(shadowBlur = 10))
@@ -7,7 +7,9 @@ echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure) {
       top = "middle",
       right = 0,
       min = -0.8, max = 0.8, precision = 2,
-      inRange = list(color = c("#0e1de7", "#ffffff", "#990000"))
+      inRange = list(color = c(
+        settings$colour_r_large_neg, "#FFFFFF", settings$colour_r_large_pos
+      ))
     ) %>%
     echarts4r::e_x_axis(
       axisLabel = list(
