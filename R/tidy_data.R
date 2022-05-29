@@ -9,8 +9,10 @@
 #' @return A tidy dataset
 #' @name tidy_data
 NULL
+#> NULL
 
 #' @rdname tidy_data
+#' @export
 tidy_data_effects <- function(df) {
   # Tidy the data
   df <-
@@ -74,6 +76,7 @@ tidy_data_effects <- function(df) {
 }
 
 #' @rdname tidy_data
+#' @export
 tidy_data_studies <- function(df) {
   df <-
     df %>%
@@ -88,6 +91,7 @@ tidy_data_studies <- function(df) {
 }
 
 #' @rdname tidy_data
+#' @export
 tidy_data_rob <- function(df) {
   df <-
     df %>%
@@ -97,6 +101,7 @@ tidy_data_rob <- function(df) {
 }
 
 #' @rdname tidy_data
+#' @export
 tidy_data_refs <- function(df) {
   # TODO: Decide what of this data needs to stay
   return(df)
