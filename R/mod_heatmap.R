@@ -2,7 +2,6 @@ mod_heatmap_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::fluidPage(
-    shiny::titlePanel("Heatmap"),
     echarts4r::echarts4rOutput(ns("heatmap"), height = "40vh"),
     shiny::actionButton(ns("reset"), "Reset"),
     shiny::tags$br(),
@@ -121,8 +120,6 @@ mod_heatmap_server <- function(id, data, settings) {
             .data$exposure %in% curr_exposure())
       })
 
-      output$data <- shiny::renderDataTable(plot_data())
-
       output$heatmap <- echarts4r::renderEcharts4r(echarts_heatmap(
         plot_data(),
         curr_outcome(), curr_exposure(), settings
@@ -150,6 +147,8 @@ mod_heatmap_server <- function(id, data, settings) {
           plot_data(),
           input$heatmap_mouseover_data$value[1],
           input$heatmap_mouseover_data$value[2],
+          exposure_types[[exp_level$updated]],
+          outcome_types[[out_level$updated]],
           settings
         ))
       )
@@ -159,10 +158,9 @@ mod_heatmap_server <- function(id, data, settings) {
 
 mod_heatmap_app <- function() {
   data <- make_dummy_data(2000)
+  settings <- get_settings()
 
   ui <- mod_heatmap_ui("heatmap_app")
-
-  settings <- get_settings()
 
   server <- function(input, output, session) {
     mod_heatmap_server(

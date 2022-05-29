@@ -4,7 +4,7 @@
 \alias{update_curr}
 \title{Update the current list of exposures or outcomes.}
 \usage{
-update_curr(key, types, level, clicked, clicked_level)
+update_curr(key, types, level, clicked, clicked_level = NULL)
 }
 \arguments{
 \item{key}{The exposures or outcomes 'key'. \code{\link{make_dummy_data}}
