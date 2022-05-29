@@ -95,9 +95,9 @@ parse_effect <- function(data, hov_exposure, hov_outcome, settings) {
   )
 
   out_string <- glue::glue(
-    "<center>There is <font color=\"{es_col}\"><b>{es_size}</b></font> evidence that ",
-    "{stringr::str_to_lower(exposure)} is ",
-    "associated with {stringr::str_to_lower(outcome)}{es_hetero}</center>"
+    "<center>There is <font color=\"{es_col}\"><b>{es_size}</b></font> ",
+    "evidence that {stringr::str_to_lower(es_row$exposure)} is associated ",
+    "with {stringr::str_to_lower(es_row$outcome)}{es_hetero}</center>"
   )
 
   return(out_string)
