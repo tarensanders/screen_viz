@@ -4,10 +4,12 @@
 \alias{load_data}
 \title{Load Data From CloudStor}
 \usage{
-load_data(path)
+load_data(path, use_cache = TRUE)
 }
 \arguments{
 \item{path}{The location of the dataset on CloudStor}
+
+\item{use_cache}{Use a cached version of the dataset, if available?}
 }
 \value{
 The loaded dataset

@@ -19,8 +19,10 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{r load-data}
 library(screenviz)
 library(tidyverse)
+library(cowplot)
 
-df <- screenviz::load_data()
+df <- load_data("Shared/screenviz/combined_effects.rds")
+df <- tidy_data_effects(df)
 ```
 
 # Scenarios
@@ -58,26 +60,75 @@ There are two groups of users we think might want to access the system. Example 
 ### Counts
 
 ```{r hm-counts}
-df %>%
-  group_by(general_exposure, general_outcome) %>%
-  summarise(n = n()) %>%
-  ggplot(aes(x = general_exposure, y = general_outcome, fill = n)) +
-  geom_tile() +
+df_p <- df %>%
+  mutate(
+    general_exposure = as_factor(general_exposure),
+    general_outcome = as_factor(general_outcome)
+  ) %>%
+  group_by(general_exposure, general_outcome, .drop = FALSE) %>%
+  summarise(n = n())
+
+hm_n <- ggplot(df_p, aes(x = general_exposure, y = general_outcome)) +
+  geom_tile(
+    data = subset(df_p, n > 0), aes(fill = n),
+    color = "white",
+    lwd = 1.5,
+    linetype = 1
+  ) +
+  geom_tile(
+    data = subset(df_p, n == 0), aes(fill = NA),
+    fill = "grey", color = "grey",
+    lwd = 1.5,
+    linetype = 0
+  ) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+  theme(
+    axis.text.x = element_text(angle = 30, vjust = 0.5),
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank()
+  )
+hm_n
 ```
 
 ### Effect sizes
 
 ```{r hm-es}
-df %>%
-  group_by(general_exposure, general_outcome) %>%
-  summarise(r = mean(r)) %>%
-  ggplot(aes(x = general_exposure, y = general_outcome, fill = r)) +
-  geom_tile() +
+df_p <- df %>%
+  mutate(
+    general_exposure = as_factor(general_exposure),
+    general_outcome = as_factor(general_outcome)
+  ) %>%
+  group_by(general_exposure, general_outcome, .drop = FALSE) %>%
+  summarise(r = mean(r))
+
+hm_es <- ggplot(df_p, aes(x = general_exposure, y = general_outcome)) +
+  geom_tile(
+    data = subset(df_p, !is.na(r)), aes(fill = r),
+    color = "white",
+    lwd = 1.5,
+    linetype = 1
+  ) +
+  geom_tile(
+    data = subset(df_p, is.na(r)), aes(fill = NA),
+    fill = "grey", color = "white",
+    lwd = 1.5,
+    linetype = 0
+  ) +
   scale_fill_distiller(palette = "RdBu", limits = c(-.5, .5)) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 30, vjust = 0.5),
+    panel.grid.major = element_blank(), panel.grid.minor = element_blank()
+  )
+hm_es
 ```
+
+### Side-by-side
+
+```{r hm-side}
+plot_grid(hm_es, hm_n)
+```
+
+
 
 ### Notes
 

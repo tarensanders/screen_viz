@@ -12,14 +12,20 @@ RoxygenNote: 7.2.0
 Imports: 
     cloudstoR,
     dplyr,
+    echarts4r,
     forcats,
     ggplot2,
+    glue,
     magrittr,
     rlang,
     shiny,
+    shinyalert,
+    stats,
     stringr
 Suggests: 
     distill,
     pkgload,
     rmarkdown,
-    rsconnect
+    rsconnect,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

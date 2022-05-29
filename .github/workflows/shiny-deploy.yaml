@@ -36,8 +36,15 @@ jobs:
           echo CLOUD_PASS=${{ secrets.CLOUD_PASS }} >> .Renviron
           cat .Renviron
 
+      - name: Authorize and deploy app to testing
+        if: github.ref == "refs/heads/dev"
+        run: |
+          rsconnect::setAccountInfo(name = 'tarensanders', token = Sys.getenv("RSCONNECT_TOKEN"), secret = Sys.getenv("RSCONNECT_SECRET"))
+          rsconnect::deployApp(appName = "screenviz-dev")
+        shell: Rscript {0}
 
       - name: Authorize and deploy app
+        if: github.ref == "refs/heads/main"
         run: |
           rsconnect::setAccountInfo(name = 'tarensanders', token = Sys.getenv("RSCONNECT_TOKEN"), secret = Sys.getenv("RSCONNECT_SECRET"))
           rsconnect::deployApp()
