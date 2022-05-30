@@ -6,11 +6,37 @@ mod_heatmap_ui <- function(id) {
       src = "www/img/Tablet-in-Hand-Mockup-2.png"
     ),
     shiny::div(
-      echarts4r::echarts4rOutput(ns("heatmap"), height = "40vh"),
-      shiny::actionButton(ns("reset"), "Reset"),
-      shiny::tags$br(),
-      shiny::tags$h2(shiny::htmlOutput(ns("hover_sentence"))),
-      style = "width:65%; margin: auto; height:100%; margin-top:10%"
+      id = "container",
+      style = "
+        margin: 0;
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        width:65%;
+        height:60%;
+        /*border: 5px solid red;*/
+        ",
+      shiny::div(
+        echarts4r::echarts4rOutput(ns("heatmap"), height = "40vh"),
+        shiny::actionButton(ns("reset"), "Reset"),
+        shiny::tags$br(),
+        # shiny::tags$h2(shiny::htmlOutput(ns("hover_sentence"))),
+        style = "
+        margin: 0;
+        position: relative;
+        /*border: 5px solid blue;*/
+        "
+      ),
+      shiny::div(
+        shiny::tags$h2(shiny::htmlOutput(ns("hover_sentence"))),
+        style = "
+        margin: 0;
+        position: relative;
+        /*border: 5px solid yellow;*/
+        "
+      )
     )
   )
 }
