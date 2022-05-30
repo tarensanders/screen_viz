@@ -26,7 +26,7 @@ echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
     echarts4r::e_y_axis(triggerEvent = TRUE) %>%
     # echarts4r::e_grid(bottom = "30%", left = "200") %>%
     echarts4r::e_axis_labels(x = "Exposure", y = "Outcome") %>%
-    e_text_style(
+    echarts4r::e_text_style(
       color = "white"
     ) %>%
     echarts4r::e_on(
