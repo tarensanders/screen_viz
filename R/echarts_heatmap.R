@@ -1,15 +1,23 @@
 echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
-  echarts4r::e_charts_(plot_data, "exposure") %>%
+  plot_data %>%
+    dplyr::mutate(
+      exposure = stringr::str_wrap(.data$exposure, settings$wrap_width),
+      outcome = stringr::str_wrap(.data$outcome, settings$wrap_width),
+    ) %>%
+    echarts4r::e_charts_("exposure") %>%
     echarts4r::e_heatmap_("outcome", "r",
       itemStyle = list(emphasis = list(shadowBlur = 10))
     ) %>%
     echarts4r::e_visual_map(
-      top = "middle",
+      top = "top",
       right = 0,
-      min = -0.8, max = 0.8, precision = 2,
+      min = -0.5, max = 0.5, precision = 2,
       inRange = list(color = c(
         settings$colour_r_large_neg, "#FFFFFF", settings$colour_r_large_pos
-      ))
+      )),
+      orient = "horizontal",
+      text = list("Risk", "Benefit"),
+      textStyle = list(color = "#FFFFFF")
     ) %>%
     echarts4r::e_x_axis(
       axisLabel = list(
@@ -19,7 +27,11 @@ echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
       triggerEvent = TRUE
     ) %>%
     echarts4r::e_y_axis(triggerEvent = TRUE) %>%
-    echarts4r::e_grid(bottom = "30%", left = "200") %>%
+    # echarts4r::e_grid(bottom = 60, left = "200") %>%
+    echarts4r::e_axis_labels(x = "Exposure", y = "Outcome") %>%
+    echarts4r::e_text_style(
+      color = "white"
+    ) %>%
     echarts4r::e_on(
       "xAxis.category",
       "function(params) {

@@ -24,6 +24,9 @@ get_settings <- function() {
   settings$colour_r_mod_neg <- "#7879FF"
   settings$colour_r_large_neg <- "#1F1FFF"
 
+  # Fonts
+  settings$wrap_width <- 15
+
 
 
   return(settings)

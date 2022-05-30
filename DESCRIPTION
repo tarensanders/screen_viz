@@ -13,13 +13,16 @@ Imports:
     cloudstoR,
     dplyr,
     echarts4r,
+    emoji,
     forcats,
+    fullPage (>= 0.1.1),
     ggplot2,
     glue,
     magrittr,
     rlang,
     shiny,
     shinyalert,
+    shinythemes,
     stats,
     stringr
 Suggests: 
@@ -29,3 +32,5 @@ Suggests:
     rsconnect,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Remotes: 
+    RinteRface/fullPage

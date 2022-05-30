@@ -2,11 +2,38 @@ mod_heatmap_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::fluidPage(
-    shiny::titlePanel("Heatmap"),
-    echarts4r::echarts4rOutput(ns("heatmap"), height = "40vh"),
-    shiny::actionButton(ns("reset"), "Reset"),
-    shiny::tags$br(),
-    shiny::tags$h2(shiny::htmlOutput(ns("hover_sentence")))
+    shiny::div(
+      id = "container",
+      style = "
+        margin: 0;
+        position: absolute;
+        top: 55%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        width:75%;
+        height:60%;
+        /*border: 5px solid red;*/
+        ",
+      shiny::div(
+        echarts4r::echarts4rOutput(ns("heatmap"), height = "40vh"),
+        shiny::actionButton(ns("reset"), "Reset"),
+        shiny::tags$br(),
+        style = "
+        margin: 0;
+        position: relative;
+        /*border: 5px solid blue;*/
+        "
+      ),
+      shiny::div(
+        shiny::tags$h2(shiny::htmlOutput(ns("hover_sentence"))),
+        style = "
+        margin: 0;
+        position: relative;
+        /*border: 5px solid yellow;*/
+        "
+      )
+    )
   )
 }
 
@@ -121,8 +148,6 @@ mod_heatmap_server <- function(id, data, settings) {
             .data$exposure %in% curr_exposure())
       })
 
-      output$data <- shiny::renderDataTable(plot_data())
-
       output$heatmap <- echarts4r::renderEcharts4r(echarts_heatmap(
         plot_data(),
         curr_outcome(), curr_exposure(), settings
@@ -150,6 +175,8 @@ mod_heatmap_server <- function(id, data, settings) {
           plot_data(),
           input$heatmap_mouseover_data$value[1],
           input$heatmap_mouseover_data$value[2],
+          exposure_types[[exp_level$updated]],
+          outcome_types[[out_level$updated]],
           settings
         ))
       )
@@ -159,10 +186,10 @@ mod_heatmap_server <- function(id, data, settings) {
 
 mod_heatmap_app <- function() {
   data <- make_dummy_data(2000)
+  settings <- get_settings()
+  shiny::addResourcePath("www", system.file("www", package = "screenviz"))
 
   ui <- mod_heatmap_ui("heatmap_app")
-
-  settings <- get_settings()
 
   server <- function(input, output, session) {
     mod_heatmap_server(
