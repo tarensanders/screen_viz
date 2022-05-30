@@ -26,6 +26,7 @@ Here is my proposed workflow:
 * You'll recieve notifications from GitHub (à la Google Docs) when someone responds to your comment.
 You can always turn these off.
 * To action feedback, I'll create a GitHub issue linked to the comment, and respond to the comment when that issue is resolved.
+* You can also just post directly on the [discussions page](https://github.com/tarensanders/screen_viz/discussions/categories/comments), or email me feedback.
 
 ## Links 🔗
 

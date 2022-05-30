@@ -1,8 +1,20 @@
 ---
 title: "Draft App"
 description: |
-  Expect lots of changes here.
+  The draft version of the app.
 site: distill::distill_website
 ---
+
+### Notes
+
+Some things to keep in mind:
+
+* This is using 'simulated' data because the format of the dataset isn't *exactly* right. But, the exposure/outcome combinations are only those that occur in the data.
+* When you reach the 'deepest' part of the graph, clicking on an exposure/outcome combination should bring up the associated metadata, but it's not implemented yet. That screen is next on my list.
+* There's currently no filter for age, but this is on my list.
+* The CSS works OK for normal size screens, but is not responsive enough for mobile. 
+* Some components are a bit laggy, but that will be fixed down the road.
+* You can view the full-page version of the app [here](https://tarensanders.shinyapps.io/screen_viz).
+
 
 <iframe src="https://tarensanders.shinyapps.io/screen_viz/" class="l-screen-inset shaded" height="1000px"></iframe>
