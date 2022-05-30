@@ -46,6 +46,8 @@ update_curr <- function(key, types, level, clicked, clicked_level = NULL) {
       dplyr::pull()
     return(out)
   }
+  # Remove any string wrapping
+  clicked <- stringr::str_replace_all(clicked, "\n", " ")
   out <-
     key %>%
     dplyr::filter(.data[[types[[level]]]] == clicked) %>%
@@ -64,6 +66,8 @@ parse_effect <- function(plot_data,
   if (is.null(hov_exposure) | is.null(hov_outcome)) {
     return("")
   }
+  hov_exposure <- stringr::str_replace_all(hov_exposure, "\n", " ")
+  hov_outcome <- stringr::str_replace_all(hov_outcome, "\n", " ")
 
   es_row <- plot_data %>%
     dplyr::filter(
