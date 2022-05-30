@@ -2,10 +2,16 @@ mod_heatmap_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::fluidPage(
-    echarts4r::echarts4rOutput(ns("heatmap"), height = "40vh"),
-    shiny::actionButton(ns("reset"), "Reset"),
-    shiny::tags$br(),
-    shiny::tags$h2(shiny::htmlOutput(ns("hover_sentence")))
+    shinyWidgets::setBackgroundImage(
+      src = "www/img/Tablet-in-Hand-Mockup-2.png"
+    ),
+    shiny::div(
+      echarts4r::echarts4rOutput(ns("heatmap"), height = "40vh"),
+      shiny::actionButton(ns("reset"), "Reset"),
+      shiny::tags$br(),
+      shiny::tags$h2(shiny::htmlOutput(ns("hover_sentence"))),
+      style = "width:65%; margin: auto; height:100%; margin-top:10%"
+    )
   )
 }
 
@@ -159,6 +165,7 @@ mod_heatmap_server <- function(id, data, settings) {
 mod_heatmap_app <- function() {
   data <- make_dummy_data(2000)
   settings <- get_settings()
+  shiny::addResourcePath("www", system.file("www", package = "screenviz"))
 
   ui <- mod_heatmap_ui("heatmap_app")
 

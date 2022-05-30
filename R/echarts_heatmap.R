@@ -19,7 +19,7 @@ echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
       triggerEvent = TRUE
     ) %>%
     echarts4r::e_y_axis(triggerEvent = TRUE) %>%
-    echarts4r::e_grid(bottom = "30%", left = "200") %>%
+    # echarts4r::e_grid(bottom = "30%", left = "200") %>%
     echarts4r::e_on(
       "xAxis.category",
       "function(params) {

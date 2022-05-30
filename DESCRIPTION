@@ -20,6 +20,8 @@ Imports:
     rlang,
     shiny,
     shinyalert,
+    shinythemes,
+    shinyWidgets,
     stats,
     stringr
 Suggests: 
