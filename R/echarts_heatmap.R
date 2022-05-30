@@ -1,8 +1,8 @@
 echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
   plot_data %>%
     dplyr::mutate(
-      exposure = stringr::str_wrap(exposure, settings$wrap_width),
-      outcome = stringr::str_wrap(outcome, settings$wrap_width),
+      exposure = stringr::str_wrap(.data$exposure, settings$wrap_width),
+      outcome = stringr::str_wrap(.data$outcome, settings$wrap_width),
     ) %>%
     echarts4r::e_charts_("exposure") %>%
     echarts4r::e_heatmap_("outcome", "r",
