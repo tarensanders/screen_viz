@@ -2,9 +2,6 @@ mod_heatmap_ui <- function(id) {
   ns <- shiny::NS(id)
 
   shiny::fluidPage(
-    shinyWidgets::setBackgroundImage(
-      src = "www/img/Tablet-in-Hand-Mockup-2.png"
-    ),
     shiny::div(
       id = "container",
       style = "
@@ -14,7 +11,7 @@ mod_heatmap_ui <- function(id) {
         left: 50%;
         -ms-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
-        width:65%;
+        width:75%;
         height:60%;
         /*border: 5px solid red;*/
         ",
@@ -22,7 +19,6 @@ mod_heatmap_ui <- function(id) {
         echarts4r::echarts4rOutput(ns("heatmap"), height = "40vh"),
         shiny::actionButton(ns("reset"), "Reset"),
         shiny::tags$br(),
-        # shiny::tags$h2(shiny::htmlOutput(ns("hover_sentence"))),
         style = "
         margin: 0;
         position: relative;
