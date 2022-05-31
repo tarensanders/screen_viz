@@ -40,7 +40,7 @@ jobs:
         if: github.ref == 'refs/heads/dev'
         run: |
           rsconnect::setAccountInfo(name = 'tarensanders', token = Sys.getenv("RSCONNECT_TOKEN"), secret = Sys.getenv("RSCONNECT_SECRET"))
-          rsconnect::deployApp(appName = "screenviz-dev")
+          rsconnect::deployApp(appName = "screen_viz-dev")
         shell: Rscript {0}
 
       - name: Authorize and deploy app
