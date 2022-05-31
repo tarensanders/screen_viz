@@ -16,6 +16,8 @@ navbar:
           href: articles/rationale/index.html
         - text: "Sketches"
           href: articles/sketches/index.html
+        - text: "Deployment"
+          href: deployment.html
         - text: "---"
         - text: "Draft App"
           href: draftapp.html

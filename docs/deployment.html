@@ -88,29 +88,29 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
   <!--radix_placeholder_meta_tags-->
-  <title>Screen Time Vizualization Development: Draft App</title>
+  <title>Screen Time Vizualization Development: Deployment</title>
 
-  <meta property="description" itemprop="description" content="The draft version of the app."/>
+  <meta property="description" itemprop="description" content="Documents the steps for deploying the app (work-in-progress)."/>
 
 
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Screen Time Vizualization Development: Draft App"/>
+  <meta property="og:title" content="Screen Time Vizualization Development: Deployment"/>
   <meta property="og:type" content="article"/>
-  <meta property="og:description" content="The draft version of the app."/>
+  <meta property="og:description" content="Documents the steps for deploying the app (work-in-progress)."/>
   <meta property="og:locale" content="en_US"/>
   <meta property="og:site_name" content="Screen Time Vizualization Development"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="Screen Time Vizualization Development: Draft App"/>
-  <meta property="twitter:description" content="The draft version of the app."/>
+  <meta property="twitter:title" content="Screen Time Vizualization Development: Deployment"/>
+  <meta property="twitter:description" content="Documents the steps for deploying the app (work-in-progress)."/>
 
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","site"]}},"value":[{"type":"character","attributes":{},"value":["Draft App"]},{"type":"character","attributes":{},"value":["The draft version of the app.\n"]},{"type":"character","attributes":{},"value":["distill::distill_website"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","site"]}},"value":[{"type":"character","attributes":{},"value":["Deployment"]},{"type":"character","attributes":{},"value":["Documents the steps for deploying the app (work-in-progress).\n"]},{"type":"character","attributes":{},"value":["distill::distill_website"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -2120,7 +2120,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Draft App","description":"The draft version of the app.","authors":[]}
+{"title":"Deployment","description":"Documents the steps for deploying the app (work-in-progress).","authors":[]}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2159,33 +2159,106 @@ Development
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>Draft App</h1>
+<h1>Deployment</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>The draft version of the app.</p></p>
+<p><p>Documents the steps for deploying the app
+(work-in-progress).</p></p>
 </div>
 
 
 <div class="d-article">
-<h3 id="notes">Notes</h3>
-<p>Some things to keep in mind:</p>
-<ul>
-<li>This is using ‘simulated’ data because the format of the dataset
-isn’t <em>exactly</em> right. But, the exposure/outcome combinations are
-only those that occur in the data.</li>
-<li>When you reach the ‘deepest’ part of the graph, clicking on an
-exposure/outcome combination should bring up the associated metadata,
-but it’s not implemented yet. That screen is next on my list.</li>
-<li>There’s currently no filter for age, but this is on my list.</li>
-<li>The CSS works OK for normal size screens, but is not responsive
-enough for mobile.</li>
-<li>Some components are a bit laggy, but that will be fixed down the
-road.</li>
-<li>You can view the full-page version of the app <a
-href="https://tarensanders.shinyapps.io/screen_viz">here</a>.</li>
-</ul>
-<iframe src="https://tarensanders.shinyapps.io/screen_viz/" class="l-screen-inset shaded" height="1200px">
-</iframe>
+<h1 id="updating-and-deploying-the-app">Updating and deploying the
+app</h1>
+<h2 id="running-locally">Running locally</h2>
+<p>This project is setup as an R package, which means you can set it up
+to run in the same way you would any other R package that isn’t on CRAN.
+Run <code>devtools::install_github("tarensanders/screen_viz")</code> to
+install the package locally.</p>
+<p>Before you can run it, you will need to make sure that app can access
+data from Cloudstor. To do this, you need two things:</p>
+<ol type="1">
+<li>Access to the folder <code>Shared/screenviz</code> on Cloudstor (ask
+Taren for access if you don’t have it).</li>
+<li>A set of environment variables to provide the app with API access to
+the folder. These should be called <code>CLOUD_USER</code> and
+<code>CLOUD_PASS</code>. See the <a
+href="https://support.aarnet.edu.au/hc/en-us/articles/236034707-How-do-I-manage-change-my-passwords-">Cloudstor
+documentation</a> for how to create and app password. The easiest way to
+edit your R environment is to use
+<code>usethis::edit_r_environ()</code>, then restart the session.</li>
+<li>You can then run the app with
+<code>screenviz::screenviz_app()</code>.</li>
+</ol>
+<h2 id="making-changes">Making changes</h2>
+<p>To make edits to the app, you need a slightly different workflow.
+Note that you still need the requirements (folder access and environment
+variables) to run the app.</p>
+<ol type="1">
+<li>Clone the <a
+href="https://github.com/tarensanders/screen_viz">GitHub Repo</a> using
+whatever workflow you like.</li>
+<li>Install the project dependencies using
+<code>devtools::install_deps()</code> and (optionally)
+<code>devtools::install_dev_deps()</code>.</li>
+<li>To check everything is setup, you can run
+<code>devtools::check()</code> or <code>devtools::install()</code>.</li>
+<li>You can then run the app with <code>devtools::load_all();
+devtools::screenviz_app()</code>, or by sourcing
+<code>app.R</code>.</li>
+</ol>
+<p>To make changes, you need to commit changes to a new branch and open
+a PR to merge to either <code>main</code> or <code>dev</code>. You
+cannot make changes directly to <code>main</code>. Before opening a PR,
+make sure to run <code>devtools::check()</code> and
+<code>devtools::install()</code> to check for build errors. If your
+change adds new functions, please try to include a test and ensure it
+runs with <code>devtools::test()</code>.</p>
+<p>PRs to <code>main</code> or <code>dev</code> will run
+<code>R-CMD-CHECK</code> using GitHub actions, and when the pull request
+is merged it will automatically be deployed to either the live app or
+the dev version.</p>
+<h1 id="updating-this-website">Updating this website</h1>
+<h2 id="update-non-article-pages">Update non-article pages</h2>
+<p>To update the non-article components of the site, run the following
+commands from the project root:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>rmarkdown</span><span class='fu'>::</span><span class='fu'><a href='https://pkgs.rstudio.com/rmarkdown/reference/render_site.html'>render_site</a></span><span class='op'>(</span><span class='st'>"docs"</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>Note that this <strong>won’t</strong> rerun any of the files in
+<code>docs/_articles</code>. Those need to be rerendered before the site
+is updated. The changes can then be pushed to GitHub to update the
+pages. Note that the changes are only visible if made in the
+<code>main</code> branch.</p>
+<h2 id="updatecreate-an-article-page">Update/create an article page</h2>
+<p>The steps for creating or updating an article are:</p>
+<ol type="1">
+<li>Create a new article in <code>docs/_articles</code> with
+<code>output: distill::distill_article</code> as the output.</li>
+<li>Once written, knit the article using whatever method you like (knit
+button, call to <code>rmarkdown</code>, etc).</li>
+</ol>
+<p>The steps for a new non-article page are:</p>
+<ol type="1">
+<li>Create an Rmd file in the <code>docs</code> folder with <code>site:
+distill::distill_website</code> as the output.</li>
+<li>There’s no need to render these, as it’s done when the site is
+updated.</li>
+</ol>
+<p>Regardless of if it is an article or just a page, the following steps
+are required:</p>
+<ol type="1">
+<li>Make sure that the page is accessible somehow. Most likely that
+means updating <code>_site.yml</code> to include a link in the
+navbar.</li>
+<li>Render the site using <code>rmarkdown::render_site("docs")</code>
+from the project root.</li>
+<li>Push changes to GitHub. Once merged into <code>main</code>, the
+GitHub pages will update automatically.</li>
+</ol>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->

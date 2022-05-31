@@ -1,0 +1,77 @@
+---
+title: "Deployment"
+description: |
+  Documents the steps for deploying the app (work-in-progress).
+site: distill::distill_website
+---
+
+```{r setup, include=FALSE}
+```
+
+# Updating and deploying the app
+
+## Running locally
+
+This project is setup as an R package, which means you can set it up to run in the same way you would any other R package that isn't on CRAN.
+Run `devtools::install_github("tarensanders/screen_viz")` to install the package locally.
+
+Before you can run it, you will need to make sure that app can access data from Cloudstor.
+To do this, you need two things:
+
+1. Access to the folder `Shared/screenviz` on Cloudstor (ask Taren for access if you don't have it).
+1. A set of environment variables to provide the app with API access to the folder.
+These should be called `CLOUD_USER` and `CLOUD_PASS`.
+See the [Cloudstor documentation](https://support.aarnet.edu.au/hc/en-us/articles/236034707-How-do-I-manage-change-my-passwords-) for how to create and app password.
+The easiest way to edit your R environment is to use `usethis::edit_r_environ()`, then restart the session.
+1. You can then run the app with `screenviz::screenviz_app()`.
+
+## Making changes
+
+To make edits to the app, you need a slightly different workflow.
+Note that you still need the requirements (folder access and environment variables) to run the app.
+
+1. Clone the [GitHub Repo](https://github.com/tarensanders/screen_viz) using whatever workflow you like.
+1. Install the project dependencies using `devtools::install_deps()` and (optionally) `devtools::install_dev_deps()`.
+1. To check everything is setup, you can run `devtools::check()` or `devtools::install()`.
+1. You can then run the app with `devtools::load_all(); devtools::screenviz_app()`, or by sourcing `app.R`.
+
+To make changes, you need to commit changes to a new branch and open a PR to merge to either `main` or `dev`.
+You cannot make changes directly to `main`.
+Before opening a PR, make sure to run `devtools::check()` and `devtools::install()` to check for build errors.
+If your change adds new functions, please try to include a test and ensure it runs with `devtools::test()`.
+
+PRs to `main` or `dev` will run `R-CMD-CHECK` using GitHub actions, and when the pull request is merged it will automatically be deployed to either the live app or the dev version.
+
+# Updating this website
+
+## Update non-article pages
+
+To update the non-article components of the site, run the following commands from the project root:
+
+```{r, eval = FALSE}
+rmarkdown::render_site("docs")
+```
+Note that this **won't** rerun any of the files in `docs/_articles`. 
+Those need to be rerendered before the site is updated.
+The changes can then be pushed to GitHub to update the pages.
+Note that the changes are only visible if made in the `main` branch.
+
+## Update/create an article page
+
+The steps for creating or updating an article are:
+
+1. Create a new article in `docs/_articles` with `output: distill::distill_article` as the output.
+1. Once written, knit the article using whatever method you like (knit button, call to `rmarkdown`, etc).
+
+The steps for a new non-article page are:
+
+1. Create an Rmd file in the `docs` folder with `site: distill::distill_website` as the output. 
+1. There's no need to render these, as it's done when the site is updated.
+
+Regardless of if it is an article or just a page, the following steps are required:
+
+1. Make sure that the page is accessible somehow.
+Most likely that means updating `_site.yml` to include a link in the navbar.
+1. Render the site using `rmarkdown::render_site("docs")` from the project root.
+1. Push changes to GitHub.
+Once merged into `main`, the GitHub pages will update automatically.

@@ -17,4 +17,4 @@ Some things to keep in mind:
 * You can view the full-page version of the app [here](https://tarensanders.shinyapps.io/screen_viz).
 
 
-<iframe src="https://tarensanders.shinyapps.io/screen_viz/" class="l-screen-inset shaded" height="1000px"></iframe>
+<iframe src="https://tarensanders.shinyapps.io/screen_viz/" class="l-screen-inset shaded" height="1200px"></iframe>
