@@ -1,0 +1,11 @@
+name: screenviz-dev
+title:
+username:
+account: tarensanders
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6390703
+bundleId: 5962472
+url: https://tarensanders.shinyapps.io/screenviz-dev/
+when: 1653976645.73624
+lastSyncTime: 1653976645.73625

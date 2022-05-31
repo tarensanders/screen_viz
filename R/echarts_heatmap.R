@@ -35,7 +35,7 @@ echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
     echarts4r::e_on(
       "xAxis.category",
       "function(params) {
-               Shiny.setInputValue('heatmap_app-xaxis_clicked',
+               Shiny.setInputValue('mod_heatmap-xaxis_clicked',
                                     params.value, {priority: 'event'});
                console.log(params.value);
               }"
@@ -43,7 +43,7 @@ echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
     echarts4r::e_on(
       "yAxis.category",
       "function(params) {
-               Shiny.setInputValue('heatmap_app-yaxis_clicked',
+               Shiny.setInputValue('mod_heatmap-yaxis_clicked',
                                     params.value, {priority: 'event'});
                console.log(params.value);
               }"

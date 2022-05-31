@@ -4,5 +4,5 @@
 #'
 #' @return Nothing
 deploy_to_dev <- function() {
-  rsconnect::deployApp(appName = "screenviz-dev")
+  rsconnect::deployApp(appName = "screen_viz-dev")
 }

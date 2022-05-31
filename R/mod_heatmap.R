@@ -78,6 +78,7 @@ mod_heatmap_server <- function(id, data, settings) {
       })
 
       shiny::observeEvent(input$yaxis_clicked, {
+        cat(file = stderr(), "Clicked on y axis\n")
         # TODO: this should be a function
         # update the clicked variable
         clicked$out <- input$yaxis_clicked
@@ -202,11 +203,11 @@ mod_heatmap_app <- function() {
   settings <- get_settings()
   shiny::addResourcePath("www", system.file("www", package = "screenviz"))
 
-  ui <- mod_heatmap_ui("heatmap_app")
+  ui <- mod_heatmap_ui("mod_heatmap")
 
   server <- function(input, output, session) {
     mod_heatmap_server(
-      "heatmap_app",
+      "mod_heatmap",
       data,
       settings
     )
