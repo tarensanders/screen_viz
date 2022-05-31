@@ -94,6 +94,19 @@ mod_heatmap_server <- function(id, data, settings) {
 
       shiny::observeEvent(input$heatmap_clicked_data, {
         # TODO: this should be a function
+        if (check_if_last(
+          clicked$exp, clicked$out, input$heatmap_clicked_data
+        )) {
+          # We've hit the last level, show metadata
+          not_implemented_err(
+            glue::glue(
+              "This should show the data about the effect clicked. ",
+              "This is not yet implemented."
+            )
+          )
+        }
+
+
         if (is.null(clicked$exp)) {
           clicked$exp <- input$heatmap_clicked_data$value[1]
           exp_level$current <- exp_level$updated
