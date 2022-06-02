@@ -199,7 +199,13 @@ mod_heatmap_server <- function(id, data, settings) {
 }
 
 mod_heatmap_app <- function() {
-  data <- make_dummy_data(2000)
+  if (!file.exists("data/data.rds")) {
+    data <- make_dummy_data(3500)
+    saveRDS(data, file = "data/data.rds")
+  } else {
+    data <- readRDS(file = "data/data.rds")
+  }
+
   settings <- get_settings()
   shiny::addResourcePath("www", system.file("www", package = "screenviz"))
 

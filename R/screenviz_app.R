@@ -60,7 +60,13 @@ screenviz_ui <- function(id) {
 #' @return NULL
 screenviz_app <- function() {
   # Load and tidy the data
-  data <- make_dummy_data(2000)
+  if (!file.exists("data/data.rds")) {
+    data <- make_dummy_data(3500)
+    saveRDS(data, file = "data/data.rds")
+  } else {
+    data <- readRDS(file = "data/data.rds")
+  }
+
   settings <- get_settings()
   shiny::addResourcePath("www", system.file("www", package = "screenviz"))
 
