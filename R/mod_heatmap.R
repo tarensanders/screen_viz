@@ -99,12 +99,8 @@ mod_heatmap_server <- function(id, data, settings) {
           clicked$exp, clicked$out, input$heatmap_clicked_data
         )) {
           # We've hit the last level, show metadata
-          not_implemented_err(
-            glue::glue(
-              "This should show the data about the effect clicked. ",
-              "This is not yet implemented."
-            )
-          )
+          output$forestplot <- shiny::renderPlot(make_forest_plot(plot_data()))
+          show_metadata(id, plot_data())
         }
 
 

@@ -119,3 +119,70 @@ parse_effect <- function(plot_data,
 
   return(out_string)
 }
+
+show_metadata <- function(id, data, method = "shinyalert") {
+  if (method == "shinyalert") {
+    shinyalert::shinyalert(
+      title = glue::glue(
+        "Association between {data$exposure} and {data$outcome}"
+      ),
+      text = shiny::tagList(
+        shiny::plotOutput(shiny::NS(id, "forestplot")),
+        shiny::HTML(
+          glue::glue(
+            "This association is based on the findings of ",
+            "<b>{data$k} studies</b>, which collected data on ",
+            "<b>{data$n} participants</b>. <br>
+          <b>Original meta-analysis:</b> {data$author} {data$year}; ",
+            "<a href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', ",
+            "target = '_blank', style='color:#a6d8f0;'>",
+            "10.31219/osf.io/c59v3</a><br>"
+          )
+        )
+      ),
+      html = TRUE,
+      size = "l"
+    )
+  }
+
+  if (method == "shinymodal") {
+    shiny::showModal(
+      shiny::modalDialog(shiny::HTML(
+        glue::glue(
+          "This association is based on the findings of {plot_data$k} studies, ",
+          "which collected data on {plot_data$n} participants."
+        )
+      ),
+      shiny::plotOutput("forestplot"),
+      title = glue::glue(
+        "Association between {plot_data$exposure} and {plot_data$outcome}"
+      )
+      )
+    )
+  }
+}
+
+make_forest_plot <- function(plot_data) {
+  plot_data %>%
+    tidyr::unnest("data", names_sep = "_") %>%
+    dplyr::mutate(
+      data_author_year = glue::glue("{data_author} ({data_year})")
+    ) %>%
+    ggplot2::ggplot(ggplot2::aes(
+      x = reorder(.data$data_author_year, -.data$data_r),
+      y = .data$data_r,
+      ymin = .data$data_r_lb,
+      ymax = .data$data_r_ub,
+      # TODO: Fix colours
+      fill = "#a6d8f0", col = "#a6d8f0"
+    )) +
+    ggplot2::geom_linerange(size = 5) +
+    ggplot2::geom_point(ggplot2::aes(size = .data$data_n),
+      shape = 21, colour = "white", stroke = 0.5
+    ) +
+    ggplot2::geom_hline(yintercept = 0) +
+    ggplot2::coord_flip() +
+    ggplot2::labs(x = "Study", y = "Correlation") +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(legend.position = "none")
+}
