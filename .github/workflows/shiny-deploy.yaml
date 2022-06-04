@@ -47,5 +47,5 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           rsconnect::setAccountInfo(name = 'tarensanders', token = Sys.getenv("RSCONNECT_TOKEN"), secret = Sys.getenv("RSCONNECT_SECRET"))
-          rsconnect::deployApp()
+          rsconnect::deployApp(appName = "screen_viz)
         shell: Rscript {0}

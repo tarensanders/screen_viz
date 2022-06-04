@@ -99,12 +99,8 @@ mod_heatmap_server <- function(id, data, settings) {
           clicked$exp, clicked$out, input$heatmap_clicked_data
         )) {
           # We've hit the last level, show metadata
-          not_implemented_err(
-            glue::glue(
-              "This should show the data about the effect clicked. ",
-              "This is not yet implemented."
-            )
-          )
+          output$forestplot <- shiny::renderPlot(make_forest_plot(plot_data()))
+          show_metadata(id, plot_data())
         }
 
 
@@ -199,7 +195,13 @@ mod_heatmap_server <- function(id, data, settings) {
 }
 
 mod_heatmap_app <- function() {
-  data <- make_dummy_data(2000)
+  if (!file.exists("data/data.rds")) {
+    data <- make_dummy_data(3500)
+    saveRDS(data, file = "data/data.rds")
+  } else {
+    data <- readRDS(file = "data/data.rds")
+  }
+
   settings <- get_settings()
   shiny::addResourcePath("www", system.file("www", package = "screenviz"))
 
