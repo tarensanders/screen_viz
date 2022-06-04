@@ -1,8 +1,8 @@
 echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
   plot_data %>%
     dplyr::mutate(
-      exposure = stringr::str_wrap(.data$exposure, settings$wrap_width),
-      outcome = stringr::str_wrap(.data$outcome, settings$wrap_width),
+      exposure = stringr::str_wrap(.data$exposure, settings$wrap_width_x),
+      outcome = stringr::str_wrap(.data$outcome, settings$wrap_width_y),
     ) %>%
     echarts4r::e_charts_("exposure") %>%
     echarts4r::e_heatmap_("outcome", "r",
@@ -22,12 +22,21 @@ echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
     echarts4r::e_x_axis(
       axisLabel = list(
         interval = 0,
-        rotate = 30
+        fontSize = 15
       ),
       triggerEvent = TRUE
     ) %>%
-    echarts4r::e_y_axis(triggerEvent = TRUE) %>%
-    # echarts4r::e_grid(bottom = 60, left = "200") %>%
+    echarts4r::e_y_axis(
+      axisLabel = list(
+        interval = 0,
+        fontSize = 15
+      ),
+      triggerEvent = TRUE
+    ) %>%
+    echarts4r::e_grid(
+      left = "13.5%",
+      bottom = "30%"
+    ) %>%
     echarts4r::e_axis_labels(x = "Exposure", y = "Outcome") %>%
     echarts4r::e_text_style(
       color = "white"

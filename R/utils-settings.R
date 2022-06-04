@@ -24,10 +24,13 @@ get_settings <- function() {
   settings$colour_r_mod_neg <- "#7879FF"
   settings$colour_r_large_neg <- "#1F1FFF"
 
-  # Fonts
-  settings$wrap_width <- 15
+  # Text
+  settings$wrap_width_x <- 10
+  settings$wrap_width_y <- 15
 
-
+  # Viewing
+  settings$min_xdim <- 1200
+  settings$min_ydim <- 800
 
   return(settings)
 }

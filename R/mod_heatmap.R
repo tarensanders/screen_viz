@@ -1,38 +1,46 @@
 mod_heatmap_ui <- function(id) {
   ns <- shiny::NS(id)
 
-  shiny::fluidPage(
-    shiny::div(
-      id = "container",
-      style = "
+  shiny::div(
+    id = "plotcontainer",
+    style = "
         margin: 0;
         position: absolute;
-        top: 55%;
+        top: 50%;
         left: 50%;
         -ms-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
-        width:75%;
-        height:60%;
+        width:85vw;
+        max-width: 120vmin;
+        height: 65vh;
+        max-height: 50vw;
         /*border: 5px solid red;*/
         ",
-      shiny::div(
-        echarts4r::echarts4rOutput(ns("heatmap"), height = "40vh"),
-        shiny::actionButton(ns("reset"), "Reset"),
-        shiny::tags$br(),
-        style = "
-        margin: 0;
-        position: relative;
-        /*border: 5px solid blue;*/
-        "
-      ),
-      shiny::div(
-        shiny::tags$h2(shiny::htmlOutput(ns("hover_sentence"))),
-        style = "
+    shiny::div(
+      shiny::tags$h2(shiny::HTML("<br><br>")),
+      style = "
         margin: 0;
         position: relative;
         /*border: 5px solid yellow;*/
         "
-      )
+    ),
+    shiny::div(
+      echarts4r::echarts4rOutput(ns("heatmap")),
+      shiny::actionButton(ns("reset"), "Reset"),
+      shiny::tags$br(),
+      style = "
+        margin: 0;
+        position: relative;
+        /*border: 5px solid blue;*/
+        "
+    ),
+    shiny::div(
+      shiny::tags$h2(shiny::htmlOutput(ns("hover_sentence"))),
+      style = "
+        margin: 0;
+        position: relative;
+        /*border: 5px solid yellow;*/
+        "
     )
   )
 }

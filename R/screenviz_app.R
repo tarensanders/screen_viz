@@ -1,9 +1,9 @@
 screenviz_ui <- function(id) {
   backgroundimgcss <- "/* background-color: #cccccc; */
-                       height: 91vh;
+                       height: 90vh;
                        background-position: center;
                        background-repeat: no-repeat;
-                       background-size: cover;
+                       background-size: contain;
                        background-image: url('%s');
                        text-align: center;
                        "
@@ -11,7 +11,7 @@ screenviz_ui <- function(id) {
     "ScreenViz",
     shiny::tabPanel(
       "Overview", mod_heatmap_ui("mod_heatmap"),
-      style = sprintf(backgroundimgcss, "www/img/Tablet-1600x1600.png")
+      style = sprintf(backgroundimgcss, "www/img/Tablet-Mockup.png")
     ),
     shiny::navbarMenu(
       "In Development",
@@ -31,7 +31,7 @@ screenviz_ui <- function(id) {
         left: 50%;
         transform: translate(-50%, -50%);
         width:50%;
-        height:30%;
+        height:inherit;
         /*border: 5px solid red;*/
         text-align: center;
         ",
