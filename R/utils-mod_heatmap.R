@@ -169,7 +169,7 @@ make_forest_plot <- function(plot_data) {
       data_author_year = glue::glue("{data_author} ({data_year})")
     ) %>%
     ggplot2::ggplot(ggplot2::aes(
-      x = reorder(.data$data_author_year, -.data$data_r),
+      x = stats::reorder(.data$data_author_year, -.data$data_r),
       y = .data$data_r,
       ymin = .data$data_r_lb,
       ymax = .data$data_r_ub,

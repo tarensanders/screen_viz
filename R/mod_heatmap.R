@@ -1,22 +1,32 @@
 mod_heatmap_ui <- function(id) {
   ns <- shiny::NS(id)
-
   shiny::fluidPage(
+    shinybrowser::detect(),
     shiny::div(
-      id = "container",
+      id = "plotcontainer",
       style = "
         margin: 0;
         position: absolute;
-        top: 55%;
+        top: 51%;
         left: 50%;
         -ms-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
-        width:75%;
-        height:60%;
+        width:85vw;
+        max-width: 120vmin;
+        height: 87.5vh;
+        max-height: 50vw;
         /*border: 5px solid red;*/
         ",
       shiny::div(
-        echarts4r::echarts4rOutput(ns("heatmap"), height = "40vh"),
+        shiny::tags$h2(shiny::HTML("<br><br>")),
+        style = "
+        margin: 0;
+        position: relative;
+        /*border: 5px solid yellow;*/
+        "
+      ),
+      shiny::div(
+        echarts4r::echarts4rOutput(ns("heatmap")),
         shiny::actionButton(ns("reset"), "Reset"),
         shiny::tags$br(),
         style = "
@@ -47,6 +57,25 @@ mod_heatmap_server <- function(id, data, settings) {
       outcomes_key <- data$out_key
       outcome_types <- names(outcomes_key)
       exposure_types <- names(exposures_key)
+
+      # Pre-checks
+      shiny::observeEvent(shinybrowser::get_width(), {
+        if (
+          shinybrowser::get_width() < settings$min_xdim |
+            shinybrowser::get_height() < settings$min_ydim
+        ) {
+          shinyalert::shinyalert(
+            title = "Screen Size",
+            text = glue::glue(
+              "This app is best viewed in a screen with a minimum resolution",
+              "of <b>{settings$min_xdim} x {settings$min_ydim} </b>.<br> ",
+              "It looks like your screen is smaller than this, so you may",
+              " experience some issues."
+            ),
+            html = TRUE, type = "warning"
+          )
+        }
+      })
 
       # Instantiate variables
       clicked <- shiny::reactiveValues(exp = NULL, out = NULL)
