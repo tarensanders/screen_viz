@@ -19,6 +19,7 @@ Imports:
     rlang,
     shiny,
     shinyalert,
+    shinybrowser,
     shinythemes,
     stats,
     stringr,
