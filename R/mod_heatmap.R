@@ -26,8 +26,13 @@ mod_heatmap_ui <- function(id) {
         "
       ),
       shiny::div(
+        shiny::div(
+          style = "display:inline-block; float:left",
+          shiny::actionButton(ns("reset"), "Reset")
+        ),
+        shiny::tags$br(),
+        shiny::tags$br(),
         echarts4r::echarts4rOutput(ns("heatmap")),
-        shiny::actionButton(ns("reset"), "Reset"),
         shiny::tags$br(),
         style = "
         margin: 0;
