@@ -20,7 +20,6 @@ Imports:
     shiny,
     shinyalert,
     shinybrowser,
-    shinyBS,
     shinyjs,
     shinythemes,
     stats,

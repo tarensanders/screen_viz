@@ -29,13 +29,15 @@ mod_heatmap_ui <- function(id) {
       shiny::div(
         shiny::div(
           style = "display:inline-block; float:left",
-          shinyBS::tipify(shiny::actionButton(ns("reset"), "Reset"),
-            "Click to reset to the first page.",
-            placement = "top", trigger = "hover"
+          shiny::div(
+            style = "display:inline-block",
+            title = "Click to reset to the first page",
+            shiny::actionButton(ns("reset"), "Reset")
           ),
-          shinyBS::tipify(shiny::actionButton(ns("prev"), "Previous"),
-            "Click to go back one step.",
-            placement = "top", trigger = "hover"
+          shiny::div(
+            style = "display:inline-block",
+            title = "Click to go back one page",
+            shiny::actionButton(ns("prev"), "Previous")
           )
         ),
         shiny::tags$br(),
