@@ -201,3 +201,17 @@ warn_screen_dims <- function(width, height, settings) {
     )
   }
 }
+
+make_prev_state_list <- function(clicked_exp, clicked_out,
+                                 exp_level_current, exp_level_updated,
+                                 out_level_current, out_level_updated) {
+  prev_state_list <- list(
+    clicked_exp = clicked_exp,
+    clicked_out = clicked_out,
+    exp_level_current = exp_level_current,
+    exp_level_updated = exp_level_updated,
+    out_level_current = out_level_current,
+    out_level_updated = out_level_updated
+  )
+  return(prev_state_list)
+}
