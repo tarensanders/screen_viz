@@ -21,6 +21,7 @@ Imports:
     shinyalert,
     shinybrowser,
     shinyBS,
+    shinyjs,
     shinythemes,
     stats,
     stringr,

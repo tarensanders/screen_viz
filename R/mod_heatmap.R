@@ -1,5 +1,6 @@
 mod_heatmap_ui <- function(id) {
   ns <- shiny::NS(id)
+
   shiny::fluidPage(
     shinybrowser::detect(),
     shiny::div(
@@ -74,6 +75,7 @@ mod_heatmap_server <- function(id, data, settings) {
           settings
         )
       })
+      shinyjs::hide("reset")
 
       # Instantiate variables
       clicked <- shiny::reactiveValues(exp = NULL, out = NULL)
@@ -90,6 +92,7 @@ mod_heatmap_server <- function(id, data, settings) {
 
       # Set observation logic
       shiny::observeEvent(input$xaxis_clicked, {
+        shinyjs::show("reset")
         # TODO: this should be a function
         # update the clicked variable
         clicked$exp <- input$xaxis_clicked
@@ -105,6 +108,7 @@ mod_heatmap_server <- function(id, data, settings) {
       })
 
       shiny::observeEvent(input$yaxis_clicked, {
+        shinyjs::show("reset")
         cat(file = stderr(), "Clicked on y axis\n")
         # TODO: this should be a function
         # update the clicked variable
@@ -121,6 +125,7 @@ mod_heatmap_server <- function(id, data, settings) {
       })
 
       shiny::observeEvent(input$heatmap_clicked_data, {
+        shinyjs::show("reset")
         # TODO: this should be a function
         if (check_if_last(
           clicked$exp, clicked$out, input$heatmap_clicked_data
@@ -191,6 +196,7 @@ mod_heatmap_server <- function(id, data, settings) {
       ))
 
       shiny::observeEvent(input$reset, {
+        shinyjs::hide("reset")
         clicked$exp <- NULL
         clicked$out <- NULL
         exp_level$current <- 1
