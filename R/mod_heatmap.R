@@ -28,7 +28,10 @@ mod_heatmap_ui <- function(id) {
       shiny::div(
         shiny::div(
           style = "display:inline-block; float:left",
-          shiny::actionButton(ns("reset"), "Reset")
+          shinyBS::tipify(shiny::actionButton(ns("reset"), "Reset"),
+            "Click to reset to the first page.",
+            placement = "top", trigger = "hover"
+          )
         ),
         shiny::tags$br(),
         shiny::tags$br(),
