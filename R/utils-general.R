@@ -15,3 +15,27 @@ check_if_last <- function(clicked_exp, clicked_out, clicked_cell) {
   }
   return(FALSE)
 }
+
+push <- function(obj, input) {
+  # Credit: https://stackoverflow.com/a/70487708/11053826
+  variable <- deparse(substitute(obj))
+  out <- get(variable, envir = parent.frame(n = 2))
+  out[[length(out) + 1]] <- input
+  assign(variable, out, envir = parent.frame(n = 2))
+}
+
+pop <- function(obj) {
+  # Credit: https://stackoverflow.com/a/70487708/11053826
+  variable <- deparse(substitute(obj))
+  obj <- get(variable, envir = parent.frame(n = 2))
+
+  if (length(obj) > 0) {
+    out <- obj[[length(obj)]]
+    assign(variable, obj[-length(obj)], envir = parent.frame(n = 2))
+  } else {
+    out <- NULL
+    assign(variable, out, envir = parent.frame(n = 2))
+  }
+
+  return(out)
+}
