@@ -186,3 +186,18 @@ make_forest_plot <- function(plot_data) {
     ggplot2::theme_minimal() +
     ggplot2::theme(legend.position = "none")
 }
+
+warn_screen_dims <- function(width, height, settings) {
+  if (width < settings$min_xdim | height < settings$min_ydim) {
+    shinyalert::shinyalert(
+      title = "Screen Size",
+      text = glue::glue(
+        "This app is best viewed in a screen with a minimum resolution",
+        "of <b>{settings$min_xdim} x {settings$min_ydim} </b>.<br> ",
+        "It looks like your screen is smaller than this, so you may",
+        " experience some issues."
+      ),
+      html = TRUE, type = "warning"
+    )
+  }
+}

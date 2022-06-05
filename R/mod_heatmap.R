@@ -65,21 +65,11 @@ mod_heatmap_server <- function(id, data, settings) {
 
       # Pre-checks
       shiny::observeEvent(shinybrowser::get_width(), {
-        if (
-          shinybrowser::get_width() < settings$min_xdim |
-            shinybrowser::get_height() < settings$min_ydim
-        ) {
-          shinyalert::shinyalert(
-            title = "Screen Size",
-            text = glue::glue(
-              "This app is best viewed in a screen with a minimum resolution",
-              "of <b>{settings$min_xdim} x {settings$min_ydim} </b>.<br> ",
-              "It looks like your screen is smaller than this, so you may",
-              " experience some issues."
-            ),
-            html = TRUE, type = "warning"
-          )
-        }
+        warn_screen_dims(
+          shinybrowser::get_width(),
+          shinybrowser::get_height(),
+          settings
+        )
       })
 
       # Instantiate variables
