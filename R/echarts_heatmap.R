@@ -6,7 +6,11 @@ echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
     ) %>%
     echarts4r::e_charts_("exposure") %>%
     echarts4r::e_heatmap_("outcome", "r",
-      itemStyle = list(emphasis = list(shadowBlur = 10))
+      itemStyle = list(
+        emphasis = list(shadowBlur = 10),
+        borderColor = "#606060",
+        borderWidth = 2
+      )
     ) %>%
     echarts4r::e_visual_map(
       top = "top",
