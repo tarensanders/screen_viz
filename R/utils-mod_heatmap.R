@@ -106,16 +106,26 @@ parse_effect <- function(plot_data,
     es_size == "no" ~ "#FFFFFF"
   )
 
+  es_dir <- dplyr::if_else(es_dir == "positive", "risk", "benefit")
+
   es_hetero <- dplyr::if_else(
     es_row[["i_2"]] > settings$threshold_i,
     ", but the evidence is mixed.", "."
   )
 
-  out_string <- glue::glue(
-    "<center>There is <font color=\"{es_col}\"><b>{es_size}</b></font> ",
-    "evidence that {stringr::str_to_lower(es_row$exposure)} is associated ",
-    "with {stringr::str_to_lower(es_row$outcome)}{es_hetero}</center>"
-  )
+  if (es_size == "no") {
+    out_string <- glue::glue(
+      "<center><b>{es_row$exposure}</b> is ",
+      "<font color==\"#FFFFFF\"><b>not</b></font> associated with ",
+      "{stringr::str_to_lower(es_row$outcome)}{es_hetero}"
+    )
+  } else {
+    out_string <- glue::glue(
+      "<center><b>{es_row$exposure}</b> is associated with a ",
+      "<font color=\"{es_col}\"><b>{es_size} {es_dir} </b></font> ",
+      "for <b>{stringr::str_to_lower(es_row$outcome)}</b> outcomes{es_hetero}"
+    )
+  }
 
   return(out_string)
 }
