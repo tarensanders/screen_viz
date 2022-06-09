@@ -116,7 +116,7 @@ parse_effect <- function(plot_data,
   if (es_size == "no") {
     out_string <- glue::glue(
       "<center><b>{es_row$exposure}</b> is ",
-      "<font color==\"#FFFFFF\"><b>not</b></font> associated with ",
+      "<font color=\"#FFFFFF\"><b>not</b></font> associated with ",
       "{stringr::str_to_lower(es_row$outcome)}{es_hetero}"
     )
   } else {

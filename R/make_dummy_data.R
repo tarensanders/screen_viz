@@ -27,7 +27,7 @@ make_dummy_data <- function(n_studies) {
   df_cats <- df_effects %>%
     dplyr::filter(.data$general_exposure != "Intervention") %>%
     dplyr::transmute(
-      outcome_category = .data$outcome_category,
+      outcome_category = stringr::str_to_sentence(.data$outcome_category),
       outcome_group = .data$general_outcome,
       outcome_specific = .data$plain_language_outcome,
       exposure_group = .data$general_exposure,
