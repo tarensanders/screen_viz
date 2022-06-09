@@ -1,5 +1,6 @@
 mod_heatmap_ui <- function(id) {
   ns <- shiny::NS(id)
+
   shiny::fluidPage(
     shinybrowser::detect(),
     shiny::div(
@@ -26,8 +27,22 @@ mod_heatmap_ui <- function(id) {
         "
       ),
       shiny::div(
+        shiny::div(
+          style = "display:inline-block; float:left",
+          shiny::div(
+            style = "display:inline-block",
+            title = "Click to reset to the first page",
+            shiny::actionButton(ns("reset"), "Reset")
+          ),
+          shiny::div(
+            style = "display:inline-block",
+            title = "Click to go back one page",
+            shiny::actionButton(ns("prev"), "Previous")
+          )
+        ),
+        shiny::tags$br(),
+        shiny::tags$br(),
         echarts4r::echarts4rOutput(ns("heatmap")),
-        shiny::actionButton(ns("reset"), "Reset"),
         shiny::tags$br(),
         style = "
         margin: 0;
@@ -60,22 +75,14 @@ mod_heatmap_server <- function(id, data, settings) {
 
       # Pre-checks
       shiny::observeEvent(shinybrowser::get_width(), {
-        if (
-          shinybrowser::get_width() < settings$min_xdim |
-            shinybrowser::get_height() < settings$min_ydim
-        ) {
-          shinyalert::shinyalert(
-            title = "Screen Size",
-            text = glue::glue(
-              "This app is best viewed in a screen with a minimum resolution",
-              "of <b>{settings$min_xdim} x {settings$min_ydim} </b>.<br> ",
-              "It looks like your screen is smaller than this, so you may",
-              " experience some issues."
-            ),
-            html = TRUE, type = "warning"
-          )
-        }
+        warn_screen_dims(
+          shinybrowser::get_width(),
+          shinybrowser::get_height(),
+          settings
+        )
       })
+      shinyjs::hide("reset")
+      shinyjs::hide("prev")
 
       # Instantiate variables
       clicked <- shiny::reactiveValues(exp = NULL, out = NULL)
@@ -89,10 +96,18 @@ mod_heatmap_server <- function(id, data, settings) {
         outcomes_key, outcome_types, out_level$current, clicked$out,
         out_level$updated
       ))
+      prev_state <- shiny::reactiveVal(c())
 
       # Set observation logic
       shiny::observeEvent(input$xaxis_clicked, {
+        shinyjs::show("reset")
+        shinyjs::show("prev")
         # TODO: this should be a function
+        prev_state_list <- make_prev_state_list(
+          clicked$exp, clicked$out, exp_level$current, exp_level$updated,
+          out_level$current, out_level$updated
+        )
+        prev_state(c(prev_state(), list(prev_state_list)))
         # update the clicked variable
         clicked$exp <- input$xaxis_clicked
         # Update the level variable
@@ -107,8 +122,15 @@ mod_heatmap_server <- function(id, data, settings) {
       })
 
       shiny::observeEvent(input$yaxis_clicked, {
+        shinyjs::show("reset")
+        shinyjs::show("prev")
         cat(file = stderr(), "Clicked on y axis\n")
         # TODO: this should be a function
+        prev_state_list <- make_prev_state_list(
+          clicked$exp, clicked$out, exp_level$current, exp_level$updated,
+          out_level$current, out_level$updated
+        )
+        prev_state(c(prev_state(), list(prev_state_list)))
         # update the clicked variable
         clicked$out <- input$yaxis_clicked
         # Update the level variable
@@ -123,6 +145,8 @@ mod_heatmap_server <- function(id, data, settings) {
       })
 
       shiny::observeEvent(input$heatmap_clicked_data, {
+        shinyjs::show("reset")
+        shinyjs::show("prev")
         # TODO: this should be a function
         if (check_if_last(
           clicked$exp, clicked$out, input$heatmap_clicked_data
@@ -130,6 +154,12 @@ mod_heatmap_server <- function(id, data, settings) {
           # We've hit the last level, show metadata
           output$forestplot <- shiny::renderPlot(make_forest_plot(plot_data()))
           show_metadata(id, plot_data())
+        } else {
+          prev_state_list <- make_prev_state_list(
+            clicked$exp, clicked$out, exp_level$current, exp_level$updated,
+            out_level$current, out_level$updated
+          )
+          prev_state(c(prev_state(), list(prev_state_list)))
         }
 
 
@@ -193,6 +223,7 @@ mod_heatmap_server <- function(id, data, settings) {
       ))
 
       shiny::observeEvent(input$reset, {
+        shinyjs::hide("reset")
         clicked$exp <- NULL
         clicked$out <- NULL
         exp_level$current <- 1
@@ -207,6 +238,35 @@ mod_heatmap_server <- function(id, data, settings) {
           outcomes_key, outcome_types, out_level$current, clicked$out,
           out_level$updated
         )
+      })
+
+      shiny::observeEvent(input$prev, {
+        if (length(prev_state()) == 1) {
+          shinyjs::hide("prev")
+          prev_state(c())
+          shinyjs::click("reset")
+        } else {
+          # Get last state
+          prev_state_list <- prev_state()[length(prev_state())][[1]]
+          # Remove this state from array
+          prev_state(prev_state()[seq_len(length(prev_state()) - 1)])
+
+          clicked$exp <- prev_state_list$clicked_exp
+          clicked$out <- prev_state_list$clicked_out
+          exp_level$current <- prev_state_list$exp_level_current
+          exp_level$updated <- prev_state_list$exp_level_updated
+          out_level$current <- prev_state_list$out_level_current
+          out_level$updated <- prev_state_list$out_level_updated
+
+          curr_exposure <- update_curr(
+            exposures_key, exposure_types, exp_level$current, clicked$exp,
+            exp_level$updated
+          )
+          curr_outcome <- update_curr(
+            outcomes_key, outcome_types, out_level$current, clicked$out,
+            out_level$updated
+          )
+        }
       })
 
       output$hover_sentence <- shiny::renderText(

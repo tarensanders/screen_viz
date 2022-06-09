@@ -106,16 +106,26 @@ parse_effect <- function(plot_data,
     es_size == "no" ~ "#FFFFFF"
   )
 
+  es_dir <- dplyr::if_else(es_dir == "positive", "risk", "benefit")
+
   es_hetero <- dplyr::if_else(
     es_row[["i_2"]] > settings$threshold_i,
     ", but the evidence is mixed.", "."
   )
 
-  out_string <- glue::glue(
-    "<center>There is <font color=\"{es_col}\"><b>{es_size}</b></font> ",
-    "evidence that {stringr::str_to_lower(es_row$exposure)} is associated ",
-    "with {stringr::str_to_lower(es_row$outcome)}{es_hetero}</center>"
-  )
+  if (es_size == "no") {
+    out_string <- glue::glue(
+      "<center><b>{es_row$exposure}</b> is ",
+      "<font color==\"#FFFFFF\"><b>not</b></font> associated with ",
+      "{stringr::str_to_lower(es_row$outcome)}{es_hetero}"
+    )
+  } else {
+    out_string <- glue::glue(
+      "<center><b>{es_row$exposure}</b> is associated with a ",
+      "<font color=\"{es_col}\"><b>{es_size} {es_dir} </b></font> ",
+      "for <b>{stringr::str_to_lower(es_row$outcome)}</b> outcomes{es_hetero}"
+    )
+  }
 
   return(out_string)
 }
@@ -185,4 +195,33 @@ make_forest_plot <- function(plot_data) {
     ggplot2::labs(x = "Study", y = "Correlation") +
     ggplot2::theme_minimal() +
     ggplot2::theme(legend.position = "none")
+}
+
+warn_screen_dims <- function(width, height, settings) {
+  if (width < settings$min_xdim | height < settings$min_ydim) {
+    shinyalert::shinyalert(
+      title = "Screen Size",
+      text = glue::glue(
+        "This app is best viewed in a screen with a minimum resolution",
+        "of <b>{settings$min_xdim} x {settings$min_ydim} </b>.<br> ",
+        "It looks like your screen is smaller than this, so you may",
+        " experience some issues."
+      ),
+      html = TRUE, type = "warning"
+    )
+  }
+}
+
+make_prev_state_list <- function(clicked_exp, clicked_out,
+                                 exp_level_current, exp_level_updated,
+                                 out_level_current, out_level_updated) {
+  prev_state_list <- list(
+    clicked_exp = clicked_exp,
+    clicked_out = clicked_out,
+    exp_level_current = exp_level_current,
+    exp_level_updated = exp_level_updated,
+    out_level_current = out_level_current,
+    out_level_updated = out_level_updated
+  )
+  return(prev_state_list)
 }

@@ -3,10 +3,20 @@ echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
     dplyr::mutate(
       exposure = stringr::str_wrap(.data$exposure, settings$wrap_width_x),
       outcome = stringr::str_wrap(.data$outcome, settings$wrap_width_y),
+      tooltip = glue::glue(
+        "<strong>Correlation:</strong> {format(r, digits = 2)}<br>",
+        "[{format(r_lb, digits = 2)} - {format(r_ub, digits = 2)}]<br>",
+        "<small>Click for more details</small>"
+      )
     ) %>%
     echarts4r::e_charts_("exposure") %>%
     echarts4r::e_heatmap_("outcome", "r",
-      itemStyle = list(emphasis = list(shadowBlur = 10))
+      bind = "tooltip",
+      itemStyle = list(
+        emphasis = list(shadowBlur = 10),
+        borderColor = "#606060",
+        borderWidth = 2
+      )
     ) %>%
     echarts4r::e_visual_map(
       top = "top",
@@ -18,6 +28,12 @@ echarts_heatmap <- function(plot_data, curr_outcome, curr_exposure, settings) {
       orient = "horizontal",
       text = list("Risk", "Benefit"),
       textStyle = list(color = "#FFFFFF")
+    ) %>%
+    echarts4r::e_tooltip(
+      formatter = htmlwidgets::JS("
+      function(params){
+        return(params.name)}
+    ")
     ) %>%
     echarts4r::e_x_axis(
       axisLabel = list(

@@ -7,8 +7,10 @@ screenviz_ui <- function(id) {
                        background-image: url('%s');
                        text-align: center;
                        "
+
   shiny::navbarPage(
     "ScreenViz",
+    header = shiny::tagList(shinyjs::useShinyjs()),
     shiny::tabPanel(
       "Overview", mod_heatmap_ui("mod_heatmap"),
       style = sprintf(backgroundimgcss, "www/img/Tablet-Mockup.png")
